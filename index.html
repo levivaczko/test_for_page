@@ -63,7 +63,7 @@
     
     .grid-content { flex: 1; min-height: 0;}
     
-    .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; : 12px; height: 100%; }
+    .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; height: 100%; }
     .large-grid { display: flex; height: 100%; }
     #altalanos-wrapper .small-grid .card { aspect-ratio: unset; }
     
@@ -72,7 +72,7 @@
         position: absolute; 
         bottom: 0; left: 0; width: 100%; height: 50px;
         display: none; 
-        align-items: center; justify-content: center; : 12px; 
+        align-items: center; justify-content: center; gap: 12px; 
         opacity: 0; 
         pointer-events: none;
         transform: translateY(10px);
@@ -87,14 +87,14 @@
     .page-arrow:hover:not(:disabled) { border-color: #005AFA; color: #005AFA; }
     .page-arrow:disabled { opacity: 0.3; cursor: default; }
     
-    .page-dots { display: flex; : 6px; }
+    .page-dots { display: flex; gap: 6px; }
     .page-dot { width: 6px; height: 6px; border-radius: 50%; background: #c8c6c4; transition: background 0.3s;}
     .page-dot.active { background: #005AFA; }
 
     /* --- USEFUL LINKS --- */
     .links-section { display: flex; flex-direction: column; }
     .links-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
-    .links-container { display: flex; flex-direction: column; : 10px; }
+    .links-container { display: flex; flex-direction: column; gap: 10px; }
     
     .link-item { 
         border: 1px solid #005AFA; 
@@ -108,7 +108,7 @@
         transition: background-color 0.2s, transform 0.2s; 
         display: flex; 
         align-items: center; 
-        : 12px; 
+        gap: 12px; 
     }
     .link-item:hover { background-color: #f3f2f1; transform: translateX(4px); }
     
