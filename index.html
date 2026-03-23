@@ -199,7 +199,7 @@
 
     </div>
 
-    <script>
+<script>
         let siteData = null;
         
         const state = {
@@ -246,7 +246,15 @@
             let aspectClass = (category === 'altalanos' && sizeType === 'large') ? 'aspect-1-1' : 'aspect-4-3';
             if (category === 'altalanos' && sizeType === 'small') aspectClass = ''; 
 
-            const htmlString = pageItems.map(c => `<a href="${c.link}" class="card image-card ${aspectClass}"><img src="${c.img}"></a>`).join('');
+            // Added target="_blank" so links open in a new tab!
+            const htmlString = pageItems.map(c => {
+                let safeLink = c.link;
+                // Double safety check for github relative links
+                if (safeLink !== '#' && !safeLink.startsWith('http') && !safeLink.startsWith('/')) {
+                    safeLink = 'https://' + safeLink;
+                }
+                return `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="card image-card ${aspectClass}"><img src="${c.img}"></a>`;
+            }).join('');
 
             contentDiv.style.opacity = '0';
             
