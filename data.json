@@ -7,17 +7,12 @@
                 "level": "kezdo"
             },
             {
-                "link": "google.com",
-                "img": "img/csempe_1_1_kezdo_langdock.png",
+                "link": "https://google.com",
+                "img": "img/test.png",
                 "level": "kezdo"
             }
         ],
         "smallCards": [
-            {
-                "link": "#",
-                "img": "img/csempe_1_1_halado_mermaid_diagram_generalas.png",
-                "level": "halado"
-            },
             {
                 "link": "#",
                 "img": "img/csempe_1_1_halado_shopfloor_layout_felulet_fejlesztes.png",
@@ -34,7 +29,12 @@
                 "level": "halado"
             },
             {
-                "link": "google.com",
+                "link": "#",
+                "img": "img/csempe_1_1_halado_mermaid_diagram_generalas.png",
+                "level": "halado"
+            },
+            {
+                "link": "https://google.com",
                 "img": "img/test_kicsi.png",
                 "level": "kezdo"
             }
@@ -44,7 +44,7 @@
         "largeCards": [
             {
                 "link": "#",
-                "img": "img/csempe_4_3_v2_copilot_chat_hasznalata.png",
+                "img": "img/csempe_4_3_v2_copilot_chat_hasznalata.jpg",
                 "level": "kezdo"
             }
         ],
