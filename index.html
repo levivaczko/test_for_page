@@ -44,7 +44,7 @@
         display: flex; 
         flex-direction: column; 
         height: 100%; 
-        /* overflow: hidden; <-- THIS WAS REMOVED TO FIX THE CLIPPING */
+        overflow: hidden; 
         position: relative;
         padding-bottom: 50px; 
     }
@@ -79,13 +79,36 @@
     .page-dot { width: 6px; height: 6px; border-radius: 50%; background: #c8c6c4; transition: background 0.3s;}
     .page-dot.active { background: #005AFA; }
 
-    /* --- USEFUL LINKS --- */
+    /* --- USEFUL LINKS (UPDATED WITH ICONS) --- */
     .links-section { display: flex; flex-direction: column; }
     .links-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
-    .links-container { display: flex; flex-direction: column; gap: 12px; }
+    .links-container { display: flex; flex-direction: column; gap: 10px; } /* Slightly tighter gap to fit 6 items perfectly */
     
-    .link-item { border: 1px solid #005AFA; border-radius: 4px; padding: 16px; background: white; color: #000; text-decoration: none; font-weight: 600; font-size: 14px; transition: background-color 0.2s, transform 0.2s; }
+    .link-item { 
+        border: 1px solid #005AFA; 
+        border-radius: 4px; 
+        padding: 12px 16px; /* Optimized padding for icons */
+        background: white; 
+        color: #000; 
+        text-decoration: none; 
+        font-weight: 600; 
+        font-size: 14px; 
+        transition: background-color 0.2s, transform 0.2s; 
+        display: flex; 
+        align-items: center; 
+        gap: 12px; /* Space between icon and text */
+    }
     .link-item:hover { background-color: #f3f2f1; transform: translateX(4px); }
+    
+    .link-icon { 
+        width: 22px; 
+        height: 22px; 
+        flex-shrink: 0; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center; 
+    }
+    .link-icon svg, .link-icon img { width: 100%; height: 100%; object-fit: contain; }
 
     /* --- VIDEO PLACEHOLDER --- */
     .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
@@ -136,11 +159,49 @@
                 <div class="links-section">
                     <div class="links-title">Hasznos linkek</div>
                     <div class="links-container">
-                        <a href="INSERT_LINK_HERE" class="link-item">M365 Copilot Chat</a>
-                        <a href="INSERT_LINK_HERE" class="link-item">Iránymutatók</a>
-                        <a href="INSERT_LINK_HERE" class="link-item">AI adatvédelmi kérdésed van?</a>
-                        <a href="INSERT_LINK_HERE" class="link-item">Kérdésed van?</a>
-                        <a href="INSERT_LINK_HERE" class="link-item">AI Horizont Kollégák</a>
+                        
+                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
+                            <div class="link-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#008080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path><path d="M8 7h6M8 11h8M8 15h4"></path></svg>
+                            </div>
+                            Körber-PTE MI BEVEZETŐ KURZUS
+                        </a>
+                        
+                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
+                            <div class="link-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#D83B01" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                            </div>
+                            M365 Copilot Chat
+                        </a>
+                        
+                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
+                            <div class="link-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                            </div>
+                            Iránymutatók
+                        </a>
+                        
+                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
+                            <div class="link-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><circle cx="10" cy="13" r="2"></circle><line x1="11.41" y1="14.41" x2="14" y2="17"></line></svg>
+                            </div>
+                            AI adatvédelmi kérdésed van?
+                        </a>
+                        
+                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
+                            <div class="link-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                            </div>
+                            Kérdésed van?
+                        </a>
+                        
+                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
+                            <div class="link-icon">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            </div>
+                            AI Horizont Kollégák
+                        </a>
+                        
                     </div>
                 </div>
             </div>
@@ -151,11 +212,11 @@
                 <h2 class="section-title">Videós <span>útmutatók</span></h2>
             </div>
             <div class="video-grid">
-                <a href="INSERT_LINK_HERE" class="video-placeholder">
+                <a href="INSERT_LINK_HERE" class="video-placeholder" target="_blank" rel="noopener noreferrer">
                     <div class="play-button"></div>
                     <div style="position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 4px; font-size: 14px;">1:14</div>
                 </a>
-                <a href="INSERT_LINK_HERE" class="video-placeholder">
+                <a href="INSERT_LINK_HERE" class="video-placeholder" target="_blank" rel="noopener noreferrer">
                     <div class="play-button"></div>
                     <div style="position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 4px; font-size: 14px;">2:30</div>
                 </a>
@@ -199,12 +260,12 @@
 
     </div>
 
-<script>
+    <script>
         let siteData = null;
         
         const state = {
-            altalanos: { filter: 'all', largePage: 0, smallPage: 0 },
-            copilot: { filter: 'all', largePage: 0, smallPage: 0 }
+            altalanos: { largePage: 0, smallPage: 0 },
+            copilot: { largePage: 0, smallPage: 0 }
         };
 
         fetch('data.json')
@@ -218,19 +279,13 @@
 
         function renderSection(category) {
             if (!siteData) return;
-            const filterVal = state[category].filter;
             const data = siteData[category];
-            
-            const fLarge = data.largeCards.filter(c => filterVal === 'all' || c.level === filterVal);
-            const fSmall = data.smallCards.filter(c => filterVal === 'all' || c.level === filterVal);
-            
-            renderGrid(category, 'large', fLarge, 1);
-            renderGrid(category, 'small', fSmall, 4);
+            renderGrid(category, 'large', data.largeCards, 1);
+            renderGrid(category, 'small', data.smallCards, 4);
         }
 
-        function renderGrid(category, sizeType, filteredItems, itemsPerPage) {
-            const rawPagesRequired = Math.ceil(filteredItems.length / itemsPerPage);
-            const totalPages = Math.max(1, rawPagesRequired);
+        function renderGrid(category, sizeType, fullItemsArray, itemsPerPage) {
+            const totalPages = Math.max(1, Math.ceil(fullItemsArray.length / itemsPerPage));
             
             if (state[category][sizeType + 'Page'] >= totalPages) {
                 state[category][sizeType + 'Page'] = Math.max(0, totalPages - 1);
@@ -241,19 +296,17 @@
             const contentDiv = document.getElementById(`${prefix}-${sizeType}-content`);
             const pagControls = document.getElementById(`${prefix}-${sizeType}-pagination`);
             
-            const pageItems = filteredItems.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage);
+            const pageItems = fullItemsArray.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage);
             
             let aspectClass = (category === 'altalanos' && sizeType === 'large') ? 'aspect-1-1' : 'aspect-4-3';
             if (category === 'altalanos' && sizeType === 'small') aspectClass = ''; 
 
-            // Added target="_blank" so links open in a new tab!
             const htmlString = pageItems.map(c => {
                 let safeLink = c.link;
-                // Double safety check for github relative links
                 if (safeLink !== '#' && !safeLink.startsWith('http') && !safeLink.startsWith('/')) {
                     safeLink = 'https://' + safeLink;
                 }
-                return `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="card image-card ${aspectClass}"><img src="${c.img}"></a>`;
+                return `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="card image-card ${aspectClass} filterable-card" data-level="${c.level}"><img src="${c.img}"></a>`;
             }).join('');
 
             contentDiv.style.opacity = '0';
@@ -261,7 +314,7 @@
             setTimeout(() => {
                 contentDiv.innerHTML = htmlString;
                 
-                if (rawPagesRequired > 1) {
+                if (totalPages > 1) {
                     pagControls.classList.add('has-pages'); 
                     document.getElementById(`${prefix}-${sizeType}-prev`).disabled = (currentPage === 0);
                     document.getElementById(`${prefix}-${sizeType}-next`).disabled = (currentPage === totalPages - 1);
@@ -275,36 +328,58 @@
                     pagControls.classList.remove('has-pages'); 
                 }
                 
+                applyVisibilityFilter(category);
+                
                 contentDiv.style.opacity = '1';
             }, 300); 
         }
 
-        document.getElementById('altalanos-filter').addEventListener('change', function() {
-            state.altalanos.filter = this.value;
-            state.altalanos.largePage = 0; 
-            state.altalanos.smallPage = 0; 
-            renderSection('altalanos');
-        });
+        function applyVisibilityFilter(category) {
+            const filterVal = document.getElementById(`${category}-filter`).value;
+            const wrapper = document.getElementById(`${category}-wrapper`);
+            if (!wrapper) return;
+            
+            const cards = wrapper.querySelectorAll('.filterable-card');
+            
+            cards.forEach(card => {
+                if (filterVal === 'all' || card.getAttribute('data-level') === filterVal) {
+                    card.style.transition = 'none';
+                    card.style.opacity = '0';
+                    card.style.visibility = 'visible';
+                    card.style.pointerEvents = 'auto';
+                    
+                    void card.offsetWidth; 
+                    
+                    card.style.transition = 'opacity 0.3s ease, transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s cubic-bezier(0.25, 0.8, 0.25, 1)';
+                    card.style.opacity = '1';
+                } else {
+                    card.style.transition = 'opacity 0.3s ease';
+                    card.style.opacity = '0';
+                    card.style.pointerEvents = 'none';
+                    
+                    setTimeout(() => {
+                        if (card.style.opacity === '0') {
+                            card.style.visibility = 'hidden';
+                        }
+                    }, 300);
+                }
+            });
+        }
 
-        document.getElementById('copilot-filter').addEventListener('change', function() {
-            state.copilot.filter = this.value;
-            state.copilot.largePage = 0; 
-            state.copilot.smallPage = 0; 
-            renderSection('copilot');
-        });
+        document.getElementById('altalanos-filter').addEventListener('change', () => applyVisibilityFilter('altalanos'));
+        document.getElementById('copilot-filter').addEventListener('change', () => applyVisibilityFilter('copilot'));
 
         function setupPagination(category, sizeType, btnId, direction) {
             document.getElementById(btnId).addEventListener('click', () => {
                 const itemsPerPage = sizeType === 'large' ? 1 : 4;
-                const filterVal = state[category].filter;
-                const filteredItems = siteData[category][sizeType + 'Cards'].filter(c => filterVal === 'all' || c.level === filterVal);
+                const fullItemsArray = siteData[category][sizeType + 'Cards'];
                 
                 if (direction === 'prev' && state[category][sizeType + 'Page'] > 0) {
                     state[category][sizeType + 'Page']--;
-                    renderGrid(category, sizeType, filteredItems, itemsPerPage);
-                } else if (direction === 'next' && state[category][sizeType + 'Page'] < Math.ceil(filteredItems.length / itemsPerPage) - 1) {
+                    renderGrid(category, sizeType, fullItemsArray, itemsPerPage);
+                } else if (direction === 'next' && state[category][sizeType + 'Page'] < Math.ceil(fullItemsArray.length / itemsPerPage) - 1) {
                     state[category][sizeType + 'Page']++;
-                    renderGrid(category, sizeType, filteredItems, itemsPerPage);
+                    renderGrid(category, sizeType, fullItemsArray, itemsPerPage);
                 }
             });
         }
