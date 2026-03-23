@@ -5,6 +5,11 @@
                 "link": "#",
                 "img": "img/csempe_1_1_kezdo_langdock.png",
                 "level": "kezdo"
+            },
+            {
+                "link": "google.com",
+                "img": "img/test.png",
+                "level": "kezdo"
             }
         ],
         "smallCards": [
@@ -27,6 +32,11 @@
                 "link": "#",
                 "img": "img/csempe_1_1_halado_excel_makrok_keszitese.png",
                 "level": "halado"
+            },
+            {
+                "link": "google.com",
+                "img": "img/test_kicsi.png",
+                "level": "kezdo"
             }
         ]
     },
