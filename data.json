@@ -9,7 +9,7 @@
             {
                 "link": "https://google.com",
                 "img": "img/csempe_1_1_halado_automatizalt_tomeges_email_kuldes.png",
-                "level": "kezdo"
+                "level": "halado"
             }
         ],
         "smallCards": [
@@ -39,7 +39,7 @@
         "largeCards": [
             {
                 "link": "#",
-                "img": "img/csempe_4_3_v2_copilot_chat_hasznalata.jpg",
+                "img": "img/csempe_4_3_v2_copilot_chat_hasznalata.png",
                 "level": "kezdo"
             }
         ],
