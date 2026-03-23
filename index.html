@@ -27,8 +27,16 @@
     .inline-filter:focus { outline: 2px solid #005AFA; border-color: transparent; }
     
     /* --- CARDS & GRIDS --- */
-    .card { border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #f3f2f1; cursor: pointer; text-decoration: none; width: 100%; padding: 0; border: none; }
-    .card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+    .card { 
+        border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #f3f2f1; cursor: pointer; text-decoration: none; width: 100%; padding: 0; border: none; 
+        /* UPDATED: Smoother, longer hover transition */
+        transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease; 
+        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    }
+    
+    /* UPDATED: Slower inner image zoom */
+    .card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    
     .card:hover img { transform: scale(1.04); }
     .card:hover { transform: translateY(-6px); box-shadow: 0 14px 28px rgba(0,0,0,0.15); z-index: 10; }
     
@@ -37,7 +45,6 @@
 
     .grid-altalanos-v2 { display: grid; grid-template-columns: 2.6fr 1fr; gap: 40px; }
     
-    /* The rigid wrapper that refuses to collapse */
     .guides-wrapper { display: flex; gap: 20px; width: 100%; height: 100%; }
     
     .guides-column { 
@@ -50,7 +57,6 @@
         padding-bottom: 50px; 
     }
     
-    /* Animation container for fades */
     .grid-content { flex: 1; transition: opacity 0.3s ease; min-height: 0;}
     
     .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; height: 100%; }
@@ -66,7 +72,7 @@
         opacity: 0; 
         pointer-events: none;
         transform: translateY(10px);
-        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+        transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
         z-index: 20;
     }
     
@@ -81,7 +87,7 @@
     .page-dot { width: 6px; height: 6px; border-radius: 50%; background: #c8c6c4; transition: background 0.3s;}
     .page-dot.active { background: #005AFA; }
 
-    /* --- USEFUL LINKS (Fixed to prevent stretching) --- */
+    /* --- USEFUL LINKS --- */
     .links-section { display: flex; flex-direction: column; }
     .links-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
     .links-container { display: flex; flex-direction: column; gap: 12px; }
@@ -91,9 +97,9 @@
 
     /* --- VIDEO PLACEHOLDER --- */
     .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
-    .video-placeholder { background: url('img/video-bg-placeholder.jpg') center/cover no-repeat #e1dfdd; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; border-radius: 8px; position: relative; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-decoration: none; }
+    .video-placeholder { background: url('img/video-bg-placeholder.jpg') center/cover no-repeat #e1dfdd; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; border-radius: 8px; position: relative; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-decoration: none; transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);}
     .video-placeholder:hover { transform: scale(1.02); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
-    .play-button { width: 64px; height: 64px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.2s; }
+    .play-button { width: 64px; height: 64px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1); }
     .video-placeholder:hover .play-button { transform: scale(1.1); }
     .play-button::after { content: ''; width: 0; height: 0; border-top: 16px solid transparent; border-bottom: 16px solid transparent; border-left: 26px solid #005AFA; margin-left: 8px; }
 </style>
@@ -204,13 +210,11 @@
     <script>
         let siteData = null;
         
-        // Track current pagination page for each block
         const state = {
             altalanos: { filter: 'all', largePage: 0, smallPage: 0 },
             copilot: { filter: 'all', largePage: 0, smallPage: 0 }
         };
 
-        // 1. Fetch JSON
         fetch('data.json')
             .then(response => response.json())
             .then(data => {
@@ -220,7 +224,6 @@
             })
             .catch(error => console.error("Hiba a JSON betöltésekor:", error));
 
-        // 2. Filter data FIRST so items group together seamlessly
         function renderSection(category) {
             if (!siteData) return;
             const filterVal = state[category].filter;
@@ -233,9 +236,7 @@
             renderGrid(category, 'small', fSmall, 4);
         }
 
-        // 3. Render Grid & Handle Pagination State
         function renderGrid(category, sizeType, filteredItems, itemsPerPage) {
-            // Calculate strictly if pagination is needed
             const rawPagesRequired = Math.ceil(filteredItems.length / itemsPerPage);
             const totalPages = Math.max(1, rawPagesRequired);
             
@@ -255,13 +256,11 @@
 
             const htmlString = pageItems.map(c => `<a href="${c.link}" class="card image-card ${aspectClass}"><img src="${c.img}"></a>`).join('');
 
-            // Fade container out, swap HTML, fade back in
             contentDiv.style.opacity = '0';
             
             setTimeout(() => {
                 contentDiv.innerHTML = htmlString;
                 
-                // Show pagination ONLY if the filtered items exceed the per-page limit
                 if (rawPagesRequired > 1) {
                     pagControls.classList.add('has-pages'); 
                     document.getElementById(`${prefix}-${sizeType}-prev`).disabled = (currentPage === 0);
@@ -280,19 +279,17 @@
             }, 300); 
         }
 
-        // --- EVENT LISTENERS ---
-
         document.getElementById('altalanos-filter').addEventListener('change', function() {
             state.altalanos.filter = this.value;
-            state.altalanos.largePage = 0; // Jumps to page 1 on filter
-            state.altalanos.smallPage = 0; // Jumps to page 1 on filter
+            state.altalanos.largePage = 0; 
+            state.altalanos.smallPage = 0; 
             renderSection('altalanos');
         });
 
         document.getElementById('copilot-filter').addEventListener('change', function() {
             state.copilot.filter = this.value;
-            state.copilot.largePage = 0; // Jumps to page 1 on filter
-            state.copilot.smallPage = 0; // Jumps to page 1 on filter
+            state.copilot.largePage = 0; 
+            state.copilot.smallPage = 0; 
             renderSection('copilot');
         });
 
@@ -300,7 +297,6 @@
             document.getElementById(btnId).addEventListener('click', () => {
                 const itemsPerPage = sizeType === 'large' ? 1 : 4;
                 const filterVal = state[category].filter;
-                // Re-filter so pagination uses the exact grouped array
                 const filteredItems = siteData[category][sizeType + 'Cards'].filter(c => filterVal === 'all' || c.level === filterVal);
                 
                 if (direction === 'prev' && state[category][sizeType + 'Page'] > 0) {
