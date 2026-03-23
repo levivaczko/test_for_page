@@ -8,7 +8,7 @@
             },
             {
                 "link": "https://google.com",
-                "img": "img/test.png",
+                "img": "img/csempe_1_1_halado_automatizalt_tomeges_email_kuldes.png",
                 "level": "kezdo"
             }
         ],
@@ -32,11 +32,6 @@
                 "link": "#",
                 "img": "img/csempe_1_1_halado_mermaid_diagram_generalas.png",
                 "level": "halado"
-            },
-            {
-                "link": "https://google.com",
-                "img": "img/test_kicsi.png",
-                "level": "kezdo"
             }
         ]
     },
