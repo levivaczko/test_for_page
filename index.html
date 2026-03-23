@@ -22,20 +22,18 @@
     .section-title { font-size: 38px; font-weight: 400; color: #000; }
     .section-title span { color: #005AFA; }
 
-    .inline-filter { font-family: 'Koerber', sans-serif; padding: 8px 30px 8px 15px; border-radius: 4px; border: 1px solid #c8c6c4; font-size: 14px; font-weight: 400; cursor: pointer; background-color: #f3f2f1; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 1em; transition: background-color 0.2s, border-color 0.2s; }
+    .inline-filter { font-family: 'Koerber', sans-serif; padding: 8px 30px 8px 15px; border-radius: 4px; border: 1px solid #c8c6c4; font-size: 14px; font-weight: 600; cursor: pointer; background-color: #f3f2f1; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 1em; transition: background-color 0.2s, border-color 0.2s; }
     .inline-filter:hover { background-color: #e1dfdd; }
     .inline-filter:focus { outline: 2px solid #005AFA; border-color: transparent; }
     
     /* --- CARDS & GRIDS --- */
     .card { 
         border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #f3f2f1; cursor: pointer; text-decoration: none; width: 100%; padding: 0; border: none; 
-        /* SLOW, PLUSH HOVER ANIMATION */
         transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease; 
         box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
     }
     .card img { 
         width: 100%; height: 100%; object-fit: cover; display: block; 
-        /* SLOW INNER IMAGE ZOOM */
         transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
     }
     .card:hover img { transform: scale(1.04); }
@@ -44,7 +42,7 @@
     .aspect-4-3 { aspect-ratio: 4 / 3; height: auto; }
     .aspect-1-1 { aspect-ratio: 1 / 1; height: auto; }
 
-    .grid-altalanos-v2 { display: grid; grid-template-columns: 2.6fr 1fr; gap: 40px; }
+    .grid-altalanos-v2 { display: grid; grid-template-columns: 2.6fr 1fr; gap: 30px; }
     
     .guides-wrapper { display: flex; gap: 12px; width: 100%; height: 100%; }
     
@@ -56,16 +54,18 @@
         overflow: hidden; 
         position: relative;
         padding-bottom: 50px;
-        /* THE FIX FOR THE CUT-OFF TOPS: Gives 15px of invisible headroom */
         padding-top: 15px; 
         margin-top: -15px; 
     }
     
-    .grid-content { flex: 1; min-height: 0;}
+    .grid-content { flex: 1; display: flex; flex-direction: column; min-height: 0;}
     
-    .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; height: 100%; }
-    .large-grid { display: flex; height: 100%; }
-    #altalanos-wrapper .small-grid .card { aspect-ratio: unset; }
+    .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; flex: 1; height: 100%; }
+    .large-grid { display: flex; flex: 1; height: 100%; }
+    
+    /* THE FIX: Force large cards to fill their box, and strip rigid aspect ratio from ALL small cards so they adapt perfectly */
+    .large-grid .card { height: 100%; width: 100%; }
+    .small-grid .card { aspect-ratio: unset !important; height: 100%; }
     
     /* --- PAGINATION UI --- */
     .pagination-controls { 
@@ -304,7 +304,9 @@
             const pageItems = fullItemsArray.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage);
             
             let aspectClass = (category === 'altalanos' && sizeType === 'large') ? 'aspect-1-1' : 'aspect-4-3';
-            if (category === 'altalanos' && sizeType === 'small') aspectClass = ''; 
+            
+            // THE JS FIX: Remove aspect class from ALL small cards so they conform to the large card's height!
+            if (sizeType === 'small') aspectClass = ''; 
 
             const htmlString = pageItems.map(c => {
                 let safeLink = c.link;
@@ -314,7 +316,6 @@
                 return `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="card image-card ${aspectClass} filterable-card" data-level="${c.level}"><img src="${c.img}"></a>`;
             }).join('');
 
-            // --- 1. ANIMATE OUT ---
             contentDiv.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
             if (animType === 'slide-left') {
                 contentDiv.style.transform = 'translateX(-40px)'; 
@@ -342,7 +343,6 @@
                     pagControls.classList.remove('has-pages'); 
                 }
                 
-                // --- 2. APPLY STATIC VISIBILITY ---
                 const filterVal = document.getElementById(`${category}-filter`).value;
                 const cards = contentDiv.querySelectorAll('.filterable-card');
                 cards.forEach(card => {
@@ -358,7 +358,6 @@
                     }
                 });
                 
-                // --- 3. PREPARE FOR ANIMATING IN ---
                 contentDiv.style.transition = 'none';
                 if (animType === 'slide-left') {
                     contentDiv.style.transform = 'translateX(40px)'; 
@@ -370,7 +369,6 @@
                 
                 void contentDiv.offsetWidth; 
                 
-                // --- 4. SLIDE & FADE IN ---
                 contentDiv.style.transition = 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)';
                 contentDiv.style.opacity = '1';
                 contentDiv.style.transform = 'translateX(0)';
@@ -378,7 +376,6 @@
             }, 300); 
         }
 
-        // Dropdown filter animation
         function applyVisibilityFilter(category) {
             const filterVal = document.getElementById(`${category}-filter`).value;
             const wrapper = document.getElementById(`${category}-wrapper`);
@@ -395,11 +392,9 @@
                     
                     void card.offsetWidth; 
                     
-                    // FADE IN (NO TRANSFORM) TO AVOID OVERWRITING HOVER
                     card.style.transition = 'opacity 0.4s ease';
                     card.style.opacity = '1';
                     
-                    // THE FIX: Clean up the inline transition so CSS :hover takes back over
                     setTimeout(() => { card.style.transition = ''; }, 450);
 
                 } else {
@@ -409,7 +404,6 @@
                     
                     setTimeout(() => {
                         if (card.style.opacity === '0') card.style.visibility = 'hidden';
-                        // Also clean up hidden cards just in case
                         card.style.transition = '';
                     }, 350);
                 }
