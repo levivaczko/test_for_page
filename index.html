@@ -37,6 +37,7 @@
 
     .grid-altalanos-v2 { display: grid; grid-template-columns: 2.6fr 1fr; gap: 40px; }
     
+    /* The rigid wrapper that refuses to collapse */
     .guides-wrapper { display: flex; gap: 20px; width: 100%; height: 100%; }
     
     .guides-column { 
@@ -46,9 +47,10 @@
         height: 100%; 
         overflow: hidden; 
         position: relative;
-        padding-bottom: 50px; /* Reserves space for pagination */
+        padding-bottom: 50px; 
     }
     
+    /* Animation container for fades */
     .grid-content { flex: 1; transition: opacity 0.3s ease; min-height: 0;}
     
     .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; height: 100%; }
@@ -79,11 +81,9 @@
     .page-dot { width: 6px; height: 6px; border-radius: 50%; background: #c8c6c4; transition: background 0.3s;}
     .page-dot.active { background: #005AFA; }
 
-    /* --- USEFUL LINKS (FIXED: Stretching removed) --- */
+    /* --- USEFUL LINKS (Fixed to prevent stretching) --- */
     .links-section { display: flex; flex-direction: column; }
     .links-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
-    
-    /* Removed space-between and height:100% to stop stretching */
     .links-container { display: flex; flex-direction: column; gap: 12px; }
     
     .link-item { border: 1px solid #005AFA; border-radius: 4px; padding: 16px; background: white; color: #000; text-decoration: none; font-weight: 600; font-size: 14px; transition: background-color 0.2s, transform 0.2s; }
@@ -206,8 +206,8 @@
         
         // Track current pagination page for each block
         const state = {
-            altalanos: { largePage: 0, smallPage: 0 },
-            copilot: { largePage: 0, smallPage: 0 }
+            altalanos: { filter: 'all', largePage: 0, smallPage: 0 },
+            copilot: { filter: 'all', largePage: 0, smallPage: 0 }
         };
 
         // 1. Fetch JSON
@@ -220,18 +220,24 @@
             })
             .catch(error => console.error("Hiba a JSON betöltésekor:", error));
 
-        // 2. Initial Render of grids
+        // 2. Filter data FIRST so items group together seamlessly
         function renderSection(category) {
             if (!siteData) return;
+            const filterVal = state[category].filter;
             const data = siteData[category];
-            // Render grids using the FULL arrays so layout stays perfectly intact
-            renderGrid(category, 'large', data.largeCards, 1);
-            renderGrid(category, 'small', data.smallCards, 4);
+            
+            const fLarge = data.largeCards.filter(c => filterVal === 'all' || c.level === filterVal);
+            const fSmall = data.smallCards.filter(c => filterVal === 'all' || c.level === filterVal);
+            
+            renderGrid(category, 'large', fLarge, 1);
+            renderGrid(category, 'small', fSmall, 4);
         }
 
-        // 3. Render Grid & Apply Visibility
-        function renderGrid(category, sizeType, fullItemsArray, itemsPerPage) {
-            const totalPages = Math.max(1, Math.ceil(fullItemsArray.length / itemsPerPage));
+        // 3. Render Grid & Handle Pagination State
+        function renderGrid(category, sizeType, filteredItems, itemsPerPage) {
+            // Calculate strictly if pagination is needed
+            const rawPagesRequired = Math.ceil(filteredItems.length / itemsPerPage);
+            const totalPages = Math.max(1, rawPagesRequired);
             
             if (state[category][sizeType + 'Page'] >= totalPages) {
                 state[category][sizeType + 'Page'] = Math.max(0, totalPages - 1);
@@ -242,14 +248,12 @@
             const contentDiv = document.getElementById(`${prefix}-${sizeType}-content`);
             const pagControls = document.getElementById(`${prefix}-${sizeType}-pagination`);
             
-            // Get just the items for this specific page
-            const pageItems = fullItemsArray.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage);
+            const pageItems = filteredItems.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage);
             
             let aspectClass = (category === 'altalanos' && sizeType === 'large') ? 'aspect-1-1' : 'aspect-4-3';
             if (category === 'altalanos' && sizeType === 'small') aspectClass = ''; 
 
-            // Add filterable-card class and data-level attribute to HTML
-            const htmlString = pageItems.map(c => `<a href="${c.link}" class="card image-card ${aspectClass} filterable-card" data-level="${c.level}"><img src="${c.img}"></a>`).join('');
+            const htmlString = pageItems.map(c => `<a href="${c.link}" class="card image-card ${aspectClass}"><img src="${c.img}"></a>`).join('');
 
             // Fade container out, swap HTML, fade back in
             contentDiv.style.opacity = '0';
@@ -257,8 +261,8 @@
             setTimeout(() => {
                 contentDiv.innerHTML = htmlString;
                 
-                // Set pagination UI state
-                if (totalPages > 1) {
+                // Show pagination ONLY if the filtered items exceed the per-page limit
+                if (rawPagesRequired > 1) {
                     pagControls.classList.add('has-pages'); 
                     document.getElementById(`${prefix}-${sizeType}-prev`).disabled = (currentPage === 0);
                     document.getElementById(`${prefix}-${sizeType}-next`).disabled = (currentPage === totalPages - 1);
@@ -272,64 +276,39 @@
                     pagControls.classList.remove('has-pages'); 
                 }
                 
-                // Immediately apply current filter to newly rendered cards
-                applyVisibilityFilter(category);
-                
                 contentDiv.style.opacity = '1';
             }, 300); 
         }
 
-        // 4. Pure Visibility Filtering (No layout shifting!)
-        function applyVisibilityFilter(category) {
-            const filterVal = document.getElementById(`${category}-filter`).value;
-            const wrapper = document.getElementById(`${category}-wrapper`);
-            if (!wrapper) return;
-            
-            const cards = wrapper.querySelectorAll('.filterable-card');
-            
-            cards.forEach(card => {
-                if (filterVal === 'all' || card.getAttribute('data-level') === filterVal) {
-                    // Turn on forced animation
-                    card.style.transition = 'none';
-                    card.style.opacity = '0';
-                    card.style.visibility = 'visible';
-                    card.style.pointerEvents = 'auto';
-                    
-                    void card.offsetWidth; // Force Reflow to guarantee animation plays
-                    
-                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease';
-                    card.style.opacity = '1';
-                } else {
-                    // Hide gracefully
-                    card.style.transition = 'opacity 0.3s ease';
-                    card.style.opacity = '0';
-                    card.style.pointerEvents = 'none';
-                    
-                    setTimeout(() => {
-                        if (card.style.opacity === '0') {
-                            card.style.visibility = 'hidden';
-                        }
-                    }, 300);
-                }
-            });
-        }
-
         // --- EVENT LISTENERS ---
 
-        document.getElementById('altalanos-filter').addEventListener('change', () => applyVisibilityFilter('altalanos'));
-        document.getElementById('copilot-filter').addEventListener('change', () => applyVisibilityFilter('copilot'));
+        document.getElementById('altalanos-filter').addEventListener('change', function() {
+            state.altalanos.filter = this.value;
+            state.altalanos.largePage = 0; // Jumps to page 1 on filter
+            state.altalanos.smallPage = 0; // Jumps to page 1 on filter
+            renderSection('altalanos');
+        });
+
+        document.getElementById('copilot-filter').addEventListener('change', function() {
+            state.copilot.filter = this.value;
+            state.copilot.largePage = 0; // Jumps to page 1 on filter
+            state.copilot.smallPage = 0; // Jumps to page 1 on filter
+            renderSection('copilot');
+        });
 
         function setupPagination(category, sizeType, btnId, direction) {
             document.getElementById(btnId).addEventListener('click', () => {
                 const itemsPerPage = sizeType === 'large' ? 1 : 4;
-                const fullItemsArray = siteData[category][sizeType + 'Cards'];
+                const filterVal = state[category].filter;
+                // Re-filter so pagination uses the exact grouped array
+                const filteredItems = siteData[category][sizeType + 'Cards'].filter(c => filterVal === 'all' || c.level === filterVal);
                 
                 if (direction === 'prev' && state[category][sizeType + 'Page'] > 0) {
                     state[category][sizeType + 'Page']--;
-                    renderGrid(category, sizeType, fullItemsArray, itemsPerPage);
-                } else if (direction === 'next' && state[category][sizeType + 'Page'] < Math.ceil(fullItemsArray.length / itemsPerPage) - 1) {
+                    renderGrid(category, sizeType, filteredItems, itemsPerPage);
+                } else if (direction === 'next' && state[category][sizeType + 'Page'] < Math.ceil(filteredItems.length / itemsPerPage) - 1) {
                     state[category][sizeType + 'Page']++;
-                    renderGrid(category, sizeType, fullItemsArray, itemsPerPage);
+                    renderGrid(category, sizeType, filteredItems, itemsPerPage);
                 }
             });
         }
