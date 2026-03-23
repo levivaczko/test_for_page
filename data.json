@@ -1,0 +1,59 @@
+{
+    "altalanos": {
+        "largeCards": [
+            {
+                "link": "#",
+                "img": "img/csempe_1_1_kezdo_langdock.png",
+                "level": "kezdo"
+            }
+        ],
+        "smallCards": [
+            {
+                "link": "#",
+                "img": "img/csempe_1_1_halado_mermaid_diagram_generalas.png",
+                "level": "halado"
+            },
+            {
+                "link": "#",
+                "img": "img/csempe_1_1_halado_shopfloor_layout_felulet_fejlesztes.png",
+                "level": "halado"
+            },
+            {
+                "link": "#",
+                "img": "img/csempe_1_1_halado_gepkonyv_forditas.png",
+                "level": "halado"
+            },
+            {
+                "link": "#",
+                "img": "img/csempe_1_1_halado_excel_makrok_keszitese.png",
+                "level": "halado"
+            }
+        ]
+    },
+    "copilot": {
+        "largeCards": [
+            {
+                "link": "#",
+                "img": "img/csempe_4_3_v2_copilot_chat_hasznalata.jpg",
+                "level": "kezdo"
+            }
+        ],
+        "smallCards": [
+            {
+                "link": "#",
+                "img": "img/csempe_4_3_v2.png",
+                "level": "kezdo"
+            },
+            {
+                "link": "#",
+                "img": "img/csempe_4_3_v2_adatgyujtes_weboldalrol.png",
+                "level": "halado"
+            },
+            {
+                "link": "#",
+                "img": "img/csempe_4_3_v2_office_script_fejlesztés.png",
+                "level": "halado"
+            }
+        ]
+    }
+}

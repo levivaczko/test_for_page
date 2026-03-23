@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SharePoint AI Page Recreation</title>
+<style>
+    /* --- FONTS & BASE STYLES --- */
+    @font-face { font-family: 'Koerber'; src: url('Koerber-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+    @font-face { font-family: 'Koerber'; src: url('Koerber-Semibold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Koerber', sans-serif; background-color: #ffffff; color: #333; overflow-x: hidden; }
+    .container { max-width: 1250px; margin: 0 auto; padding: 20px; }
+    
+    @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
+    .animate-in { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+    .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+    
+    /* --- NAV & HERO --- */
+    .nav-container { display: flex; align-items: center; max-width: 1400px; margin: 0 auto; height: 48px; border-bottom: 1px solid #e1dfdd; padding: 0 40px;}
+    .nav-link { margin-right: 24px; font-size: 15px; font-weight: 600; color: #333; text-decoration: none; display: flex; align-items: center; height: 100%; border-bottom: 2px solid transparent;}
+    .nav-link:hover { color: #005AFA; } .nav-link.active { border-bottom: 2px solid #005AFA; color: #000; }
+    
+    .section { margin-bottom: 80px; }
+    .section-header { border-bottom: 1px solid #c8c6c4; margin-bottom: 24px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+    .section-title { font-size: 38px; font-weight: 400; color: #000; }
+    .section-title span { color: #005AFA; }
+
+    .inline-filter { font-family: 'Koerber', sans-serif; padding: 8px 30px 8px 15px; border-radius: 4px; border: 1px solid #c8c6c4; font-size: 14px; font-weight: 600; cursor: pointer; background-color: #f3f2f1; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 1em; }
+    
+    /* --- CARDS & GRIDS --- */
+    .card { border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #f3f2f1; cursor: pointer; text-decoration: none; width: 100%; padding: 0; border: none; }
+    .card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.5s ease; }
+    .card:hover img { transform: scale(1.04); }
+    .card:hover { transform: translateY(-6px); box-shadow: 0 14px 28px rgba(0,0,0,0.15); z-index: 10; }
+    
+    .aspect-4-3 { aspect-ratio: 4 / 3; height: auto; }
+    .aspect-1-1 { aspect-ratio: 1 / 1; height: auto; }
+
+    .grid-altalanos-v2 { display: grid; grid-template-columns: 2.6fr 1fr; gap: 40px; }
+    
+    .guides-wrapper { display: flex; gap: 20px; width: 100%; height: 100%; }
+    
+    /* Columns wrap content and pagination */
+    .guides-column { flex: 1; display: flex; flex-direction: column; gap: 15px; height: 100%; }
+    
+    /* The animated container holding the cards */
+    .grid-content { flex: 1; transition: opacity 0.3s ease; }
+    
+    /* Specific inner grids */
+    .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; height: 100%; }
+    .large-grid { display: flex; height: 100%; }
+    #altalanos-wrapper .small-grid .card { aspect-ratio: unset; } /* Fix height fill */
+    
+    /* --- PAGINATION UI (Matching the image) --- */
+    .pagination-controls { display: none; align-items: center; justify-content: center; gap: 8px; margin-top: auto; padding-top: 10px; }
+    
+    .page-arrow { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e1dfdd; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666; transition: background 0.2s; font-family: sans-serif; font-size: 14px; }
+    .page-arrow:hover:not(:disabled) { background: #f3f2f1; color: #000; }
+    .page-arrow:disabled { opacity: 0.4; cursor: default; }
+    
+    .page-dots { display: flex; gap: 6px; }
+    .page-dot { width: 6px; height: 6px; border-radius: 50%; background: #c8c6c4; }
+    .page-dot.active { background: #005AFA; }
+
+    /* --- USEFUL LINKS & VIDEOS --- */
+    .links-section { display: flex; flex-direction: column; }
+    .links-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
+    .links-container { display: flex; flex-direction: column; gap: 12px; }
+    .link-item { border: 1px solid #005AFA; border-radius: 4px; padding: 16px; background: white; color: #000; text-decoration: none; font-weight: 600; font-size: 14px; transition: background-color 0.2s, transform 0.2s; }
+    .link-item:hover { background-color: #f3f2f1; transform: translateX(4px); }
+
+    .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
+    .video-placeholder { background: url('img/video-bg-placeholder.jpg') center/cover no-repeat #e1dfdd; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; border-radius: 8px; position: relative; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-decoration: none; }
+</style>
+</head>
+<body>
+    <div class="nav-container">
+        <a href="#" class="nav-link active">Home</a>
+        <a href="#" class="nav-link">Útmutatók ▾</a>
+    </div>
+
+    <div class="container">
+
+        <div class="section animate-in delay-1">
+            <div class="section-header">
+                <h2 class="section-title">Általános <span>útmutatók</span></h2>
+                <select class="inline-filter" id="altalanos-filter">
+                    <option value="all">Minden szint</option>
+                    <option value="kezdo">Kezdő</option>
+                    <option value="halado">Haladó</option>
+                </select>
+            </div>
+            
+            <div class="grid-altalanos-v2">
+                <div class="guides-wrapper" id="altalanos-wrapper">
+                    
+                    <div class="guides-column">
+                        <div class="grid-content large-grid" id="alt-large-content"></div>
+                        <div class="pagination-controls" id="alt-large-pagination">
+                            <button class="page-arrow" id="alt-large-prev">&lt;</button>
+                            <div class="page-dots" id="alt-large-dots"></div>
+                            <button class="page-arrow" id="alt-large-next">&gt;</button>
+                        </div>
+                    </div>
+                    
+                    <div class="guides-column">
+                        <div class="grid-content small-grid" id="alt-small-content"></div>
+                        <div class="pagination-controls" id="alt-small-pagination">
+                            <button class="page-arrow" id="alt-small-prev">&lt;</button>
+                            <div class="page-dots" id="alt-small-dots"></div>
+                            <button class="page-arrow" id="alt-small-next">&gt;</button>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="links-section">
+                    <div class="links-title">Hasznos linkek</div>
+                    <div class="links-container">
+                        <a href="#" class="link-item">M365 Copilot Chat</a>
+                        <a href="#" class="link-item">Iránymutatók</a>
+                        <a href="#" class="link-item">AI adatvédelmi kérdésed van?</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section animate-in delay-2">
+            <div class="section-header">
+                <h2 class="section-title">Videós <span>útmutatók</span></h2>
+            </div>
+            <div class="video-grid">
+                <a href="#" class="video-placeholder"></a>
+                <a href="#" class="video-placeholder"></a>
+            </div>
+        </div>
+
+        <div class="section animate-in delay-3">
+            <div class="section-header">
+                <h2 class="section-title">Copilot <span>útmutatók</span></h2>
+                <select class="inline-filter" id="copilot-filter">
+                    <option value="all">Minden szint</option>
+                    <option value="kezdo">Kezdő</option>
+                    <option value="halado">Haladó</option>
+                </select>
+            </div>
+            
+            <div class="grid-altalanos-v2" style="grid-template-columns: 1fr;"> 
+                <div class="guides-wrapper" id="copilot-wrapper">
+                    
+                    <div class="guides-column">
+                        <div class="grid-content large-grid" id="cop-large-content"></div>
+                        <div class="pagination-controls" id="cop-large-pagination">
+                            <button class="page-arrow" id="cop-large-prev">&lt;</button>
+                            <div class="page-dots" id="cop-large-dots"></div>
+                            <button class="page-arrow" id="cop-large-next">&gt;</button>
+                        </div>
+                    </div>
+                    
+                    <div class="guides-column">
+                        <div class="grid-content small-grid" id="cop-small-content"></div>
+                        <div class="pagination-controls" id="cop-small-pagination">
+                            <button class="page-arrow" id="cop-small-prev">&lt;</button>
+                            <div class="page-dots" id="cop-small-dots"></div>
+                            <button class="page-arrow" id="cop-small-next">&gt;</button>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let siteData = null;
+        
+        // State tracking for each section and grid type
+        const state = {
+            altalanos: { filter: 'all', largePage: 0, smallPage: 0 },
+            copilot: { filter: 'all', largePage: 0, smallPage: 0 }
+        };
+
+        // 1. Fetch the JSON file
+        fetch('data.json')
+            .then(response => response.json())
+            .then(data => {
+                siteData = data;
+                // Render both sections initially
+                renderSection('altalanos');
+                renderSection('copilot');
+            })
+            .catch(error => console.error("Nem sikerült betölteni a data.json fájlt. (Ha lokálisan vagy, töltsd fel GitHubra!)", error));
+
+        // 2. Render an entire section based on current filter
+        function renderSection(category) {
+            if (!siteData) return;
+            
+            const filterVal = state[category].filter;
+            const data = siteData[category];
+            
+            // Filter arrays
+            const fLarge = data.largeCards.filter(c => filterVal === 'all' || c.level === filterVal);
+            const fSmall = data.smallCards.filter(c => filterVal === 'all' || c.level === filterVal);
+            
+            // Render independent grids
+            renderGrid(category, 'large', fLarge, 1);
+            renderGrid(category, 'small', fSmall, 4);
+        }
+
+        // 3. Render a specific grid (Large or Small) with independent animation and pagination
+        function renderGrid(category, sizeType, items, itemsPerPage) {
+            // Calculate pages
+            const totalPages = Math.max(1, Math.ceil(items.length / itemsPerPage));
+            
+            // Safety check if current page exceeds new total pages
+            if (state[category][sizeType + 'Page'] >= totalPages) {
+                state[category][sizeType + 'Page'] = Math.max(0, totalPages - 1);
+            }
+            
+            const currentPage = state[category][sizeType + 'Page'];
+            
+            // Get HTML containers
+            const prefix = category === 'altalanos' ? 'alt' : 'cop';
+            const contentDiv = document.getElementById(`${prefix}-${sizeType}-content`);
+            const pagControls = document.getElementById(`${prefix}-${sizeType}-pagination`);
+            
+            // Slice data for this specific page
+            const pageItems = items.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage);
+            
+            // Determine aspect ratio class based on section and size
+            let aspectClass = (category === 'altalanos' && sizeType === 'large') ? 'aspect-1-1' : 'aspect-4-3';
+            if (category === 'altalanos' && sizeType === 'small') aspectClass = ''; // Handles stretching
+
+            // Build HTML
+            const htmlString = pageItems.map(c => `<a href="${c.link}" class="card image-card ${aspectClass}"><img src="${c.img}"></a>`).join('');
+
+            // ANIMATION LOGIC: Fade out, swap content, fade in
+            contentDiv.style.opacity = '0';
+            
+            setTimeout(() => {
+                contentDiv.innerHTML = htmlString;
+                
+                // Pagination UI updates
+                if (totalPages > 1) {
+                    pagControls.style.display = 'flex';
+                    document.getElementById(`${prefix}-${sizeType}-prev`).disabled = (currentPage === 0);
+                    document.getElementById(`${prefix}-${sizeType}-next`).disabled = (currentPage === totalPages - 1);
+                    
+                    const dotsContainer = document.getElementById(`${prefix}-${sizeType}-dots`);
+                    dotsContainer.innerHTML = '';
+                    for (let i = 0; i < totalPages; i++) {
+                        dotsContainer.innerHTML += `<div class="page-dot ${i === currentPage ? 'active' : ''}"></div>`;
+                    }
+                } else {
+                    pagControls.style.display = 'none';
+                }
+                
+                // Fade back in
+                contentDiv.style.opacity = '1';
+            }, 300); // 300ms matches the CSS transition time
+        }
+
+        // --- EVENT LISTENERS ---
+
+        // Filters
+        document.getElementById('altalanos-filter').addEventListener('change', function() {
+            state.altalanos.filter = this.value;
+            state.altalanos.largePage = 0; // Reset pages on filter
+            state.altalanos.smallPage = 0;
+            renderSection('altalanos');
+        });
+
+        document.getElementById('copilot-filter').addEventListener('change', function() {
+            state.copilot.filter = this.value;
+            state.copilot.largePage = 0;
+            state.copilot.smallPage = 0;
+            renderSection('copilot');
+        });
+
+        // Pagination Buttons Helper
+        function setupPagination(category, sizeType, btnId, direction) {
+            document.getElementById(btnId).addEventListener('click', () => {
+                const itemsPerPage = sizeType === 'large' ? 1 : 4;
+                const filterVal = state[category].filter;
+                const items = siteData[category][sizeType + 'Cards'].filter(c => filterVal === 'all' || c.level === filterVal);
+                
+                if (direction === 'prev' && state[category][sizeType + 'Page'] > 0) {
+                    state[category][sizeType + 'Page']--;
+                    renderGrid(category, sizeType, items, itemsPerPage);
+                } else if (direction === 'next' && state[category][sizeType + 'Page'] < Math.ceil(items.length / itemsPerPage) - 1) {
+                    state[category][sizeType + 'Page']++;
+                    renderGrid(category, sizeType, items, itemsPerPage);
+                }
+            });
+        }
+
+        // Bind all 8 pagination buttons
+        setupPagination('altalanos', 'large', 'alt-large-prev', 'prev');
+        setupPagination('altalanos', 'large', 'alt-large-next', 'next');
+        setupPagination('altalanos', 'small', 'alt-small-prev', 'prev');
+        setupPagination('altalanos', 'small', 'alt-small-next', 'next');
+
+        setupPagination('copilot', 'large', 'cop-large-prev', 'prev');
+        setupPagination('copilot', 'large', 'cop-large-next', 'next');
+        setupPagination('copilot', 'small', 'cop-small-prev', 'prev');
+        setupPagination('copilot', 'small', 'cop-small-next', 'next');
+
+    </script>
+</body>
+</html>
