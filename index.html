@@ -27,16 +27,8 @@
     .inline-filter:focus { outline: 2px solid #005AFA; border-color: transparent; }
     
     /* --- CARDS & GRIDS --- */
-    .card { 
-        border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #f3f2f1; cursor: pointer; text-decoration: none; width: 100%; padding: 0; border: none; 
-        /* UPDATED: Smoother, longer hover transition */
-        transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease; 
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-    }
-    
-    /* UPDATED: Slower inner image zoom */
+    .card { border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #f3f2f1; cursor: pointer; text-decoration: none; width: 100%; padding: 0; border: none; transition: transform 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 0.5s cubic-bezier(0.25, 0.8, 0.25, 1), opacity 0.3s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
     .card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
-    
     .card:hover img { transform: scale(1.04); }
     .card:hover { transform: translateY(-6px); box-shadow: 0 14px 28px rgba(0,0,0,0.15); z-index: 10; }
     
@@ -52,7 +44,7 @@
         display: flex; 
         flex-direction: column; 
         height: 100%; 
-        overflow: hidden; 
+        /* overflow: hidden; <-- THIS WAS REMOVED TO FIX THE CLIPPING */
         position: relative;
         padding-bottom: 50px; 
     }
