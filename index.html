@@ -92,6 +92,7 @@
 
     /* --- USEFUL LINKS --- */
     .links-section { display: flex; flex-direction: column; }
+    .links-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
     
     /* --- VIDEO PLACEHOLDER --- */
     .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
@@ -135,13 +136,15 @@
                     
                 </div>
 
-                <div class="links-section"></div>
+                <div class="links-section">
+                    <div class="links-title">Hasznos linkek</div>
+                </div>
             </div>
         </div>
 
-        <div class="section" style="visibility: hidden; pointer-events: none;">
+        <div class="section animate-in delay-2">
             <div class="section-header">
-                <h2 class="section-title">Videós útmutatók</h2>
+                <h2 class="section-title">Videós <span>útmutatók</span></h2>
             </div>
             <div class="video-grid">
                 <div class="video-placeholder"></div>
