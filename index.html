@@ -37,43 +37,30 @@
 
     .grid-altalanos-v2 { display: grid; grid-template-columns: 2.6fr 1fr; gap: 40px; }
     
-    .guides-wrapper { display: flex; gap: 20px; width: 100%; height: 100%; transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
+    .guides-wrapper { display: flex; gap: 20px; width: 100%; height: 100%; }
     
-    /* Columns wrap content and reserve 50px at the bottom for pagination */
     .guides-column { 
         flex: 1; 
         display: flex; 
         flex-direction: column; 
         height: 100%; 
-        transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); 
         overflow: hidden; 
         position: relative;
-        padding-bottom: 50px; /* Crucial fix: Reserves space so pagination is not pushed out of bounds */
+        padding-bottom: 50px; /* Reserves space for pagination */
     }
     
-    /* The animated container holding the cards */
     .grid-content { flex: 1; transition: opacity 0.3s ease; min-height: 0;}
     
-    /* Specific inner grids */
     .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; height: 100%; }
     .large-grid { display: flex; height: 100%; }
     #altalanos-wrapper .small-grid .card { aspect-ratio: unset; }
     
-    /* Structural collapse logic */
-    .guides-wrapper.state-right-only .guides-left { flex: 0; opacity: 0; margin-right: -20px; pointer-events: none; }
-    .guides-wrapper.state-left-only .guides-right { flex: 0; opacity: 0; margin-left: -20px; pointer-events: none; }
-    
-    /* --- PAGINATION UI WITH HOVER ANIMATION --- */
+    /* --- PAGINATION UI --- */
     .pagination-controls { 
-        position: absolute; /* Anchors it to the bottom of the column */
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        height: 50px;
-        display: none; /* Removed from layout unless it has pages */
+        position: absolute; 
+        bottom: 0; left: 0; width: 100%; height: 50px;
+        display: none; 
         align-items: center; justify-content: center; gap: 12px; 
-        
-        /* Hidden by default, slides up on hover */
         opacity: 0; 
         pointer-events: none;
         transform: translateY(10px);
@@ -81,29 +68,10 @@
         z-index: 20;
     }
     
-    /* When JS detects >1 page, it adds this class so the block exists in the layout */
-    .pagination-controls.has-pages {
-        display: flex; 
-    }
-
-    /* When hovering anywhere over the column, fade in the pagination */
-    .guides-column:hover .pagination-controls.has-pages {
-        opacity: 1;
-        pointer-events: auto;
-        transform: translateY(0);
-    }
+    .pagination-controls.has-pages { display: flex; }
+    .guides-column:hover .pagination-controls.has-pages { opacity: 1; pointer-events: auto; transform: translateY(0); }
     
-    .page-arrow { 
-        width: 32px; height: 32px; 
-        border-radius: 50%; 
-        border: 1px solid #c8c6c4; 
-        background: transparent; 
-        cursor: pointer; 
-        display: flex; align-items: center; justify-content: center; 
-        color: #333; 
-        transition: background 0.2s, border-color 0.2s, color 0.2s; 
-        font-family: sans-serif; font-size: 14px; 
-    }
+    .page-arrow { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #c8c6c4; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #333; transition: background 0.2s, border-color 0.2s, color 0.2s; font-family: sans-serif; font-size: 14px; }
     .page-arrow:hover:not(:disabled) { border-color: #005AFA; color: #005AFA; }
     .page-arrow:disabled { opacity: 0.3; cursor: default; }
     
@@ -111,13 +79,17 @@
     .page-dot { width: 6px; height: 6px; border-radius: 50%; background: #c8c6c4; transition: background 0.3s;}
     .page-dot.active { background: #005AFA; }
 
-    /* --- USEFUL LINKS & VIDEOS --- */
+    /* --- USEFUL LINKS (FIXED: Stretching removed) --- */
     .links-section { display: flex; flex-direction: column; }
     .links-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
-    .links-container { display: flex; flex-direction: column; justify-content: space-between; height: 100%; gap: 12px; }
+    
+    /* Removed space-between and height:100% to stop stretching */
+    .links-container { display: flex; flex-direction: column; gap: 12px; }
+    
     .link-item { border: 1px solid #005AFA; border-radius: 4px; padding: 16px; background: white; color: #000; text-decoration: none; font-weight: 600; font-size: 14px; transition: background-color 0.2s, transform 0.2s; }
     .link-item:hover { background-color: #f3f2f1; transform: translateX(4px); }
 
+    /* --- VIDEO PLACEHOLDER --- */
     .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
     .video-placeholder { background: url('img/video-bg-placeholder.jpg') center/cover no-repeat #e1dfdd; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; border-radius: 8px; position: relative; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-decoration: none; }
     .video-placeholder:hover { transform: scale(1.02); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
@@ -232,13 +204,13 @@
     <script>
         let siteData = null;
         
-        // State tracking for each section and grid type
+        // Track current pagination page for each block
         const state = {
-            altalanos: { filter: 'all', largePage: 0, smallPage: 0 },
-            copilot: { filter: 'all', largePage: 0, smallPage: 0 }
+            altalanos: { largePage: 0, smallPage: 0 },
+            copilot: { largePage: 0, smallPage: 0 }
         };
 
-        // 1. Fetch the JSON file
+        // 1. Fetch JSON
         fetch('data.json')
             .then(response => response.json())
             .then(data => {
@@ -246,59 +218,46 @@
                 renderSection('altalanos');
                 renderSection('copilot');
             })
-            .catch(error => console.error("Nem sikerült betölteni a data.json fájlt. Kérlek használj webszervert vagy töltsd fel GitHubra!", error));
+            .catch(error => console.error("Hiba a JSON betöltésekor:", error));
 
-        // 2. Render an entire section based on current filter
+        // 2. Initial Render of grids
         function renderSection(category) {
             if (!siteData) return;
-            
-            const filterVal = state[category].filter;
             const data = siteData[category];
-            
-            // Filter arrays
-            const fLarge = data.largeCards.filter(c => filterVal === 'all' || c.level === filterVal);
-            const fSmall = data.smallCards.filter(c => filterVal === 'all' || c.level === filterVal);
-            
-            // STRUCTURAL COLLAPSE LOGIC
-            const wrapper = document.getElementById(`${category}-wrapper`);
-            wrapper.classList.remove('state-all', 'state-left-only', 'state-right-only');
-            if (fLarge.length > 0 && fSmall.length > 0) wrapper.classList.add('state-all');
-            else if (fLarge.length > 0) wrapper.classList.add('state-left-only');
-            else if (fSmall.length > 0) wrapper.classList.add('state-right-only');
-            
-            // Render independent grids
-            renderGrid(category, 'large', fLarge, 1);
-            renderGrid(category, 'small', fSmall, 4);
+            // Render grids using the FULL arrays so layout stays perfectly intact
+            renderGrid(category, 'large', data.largeCards, 1);
+            renderGrid(category, 'small', data.smallCards, 4);
         }
 
-        // 3. Render a specific grid (Large or Small) with independent animation and pagination
-        function renderGrid(category, sizeType, items, itemsPerPage) {
-            const totalPages = Math.max(1, Math.ceil(items.length / itemsPerPage));
+        // 3. Render Grid & Apply Visibility
+        function renderGrid(category, sizeType, fullItemsArray, itemsPerPage) {
+            const totalPages = Math.max(1, Math.ceil(fullItemsArray.length / itemsPerPage));
             
             if (state[category][sizeType + 'Page'] >= totalPages) {
                 state[category][sizeType + 'Page'] = Math.max(0, totalPages - 1);
             }
             
             const currentPage = state[category][sizeType + 'Page'];
-            
             const prefix = category === 'altalanos' ? 'alt' : 'cop';
             const contentDiv = document.getElementById(`${prefix}-${sizeType}-content`);
             const pagControls = document.getElementById(`${prefix}-${sizeType}-pagination`);
             
-            const pageItems = items.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage);
+            // Get just the items for this specific page
+            const pageItems = fullItemsArray.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage);
             
             let aspectClass = (category === 'altalanos' && sizeType === 'large') ? 'aspect-1-1' : 'aspect-4-3';
             if (category === 'altalanos' && sizeType === 'small') aspectClass = ''; 
 
-            const htmlString = pageItems.map(c => `<a href="${c.link}" class="card image-card ${aspectClass}"><img src="${c.img}"></a>`).join('');
+            // Add filterable-card class and data-level attribute to HTML
+            const htmlString = pageItems.map(c => `<a href="${c.link}" class="card image-card ${aspectClass} filterable-card" data-level="${c.level}"><img src="${c.img}"></a>`).join('');
 
-            // ANIMATION LOGIC
+            // Fade container out, swap HTML, fade back in
             contentDiv.style.opacity = '0';
             
             setTimeout(() => {
                 contentDiv.innerHTML = htmlString;
                 
-                // Pagination UI updates
+                // Set pagination UI state
                 if (totalPages > 1) {
                     pagControls.classList.add('has-pages'); 
                     document.getElementById(`${prefix}-${sizeType}-prev`).disabled = (currentPage === 0);
@@ -313,39 +272,64 @@
                     pagControls.classList.remove('has-pages'); 
                 }
                 
+                // Immediately apply current filter to newly rendered cards
+                applyVisibilityFilter(category);
+                
                 contentDiv.style.opacity = '1';
             }, 300); 
         }
 
+        // 4. Pure Visibility Filtering (No layout shifting!)
+        function applyVisibilityFilter(category) {
+            const filterVal = document.getElementById(`${category}-filter`).value;
+            const wrapper = document.getElementById(`${category}-wrapper`);
+            if (!wrapper) return;
+            
+            const cards = wrapper.querySelectorAll('.filterable-card');
+            
+            cards.forEach(card => {
+                if (filterVal === 'all' || card.getAttribute('data-level') === filterVal) {
+                    // Turn on forced animation
+                    card.style.transition = 'none';
+                    card.style.opacity = '0';
+                    card.style.visibility = 'visible';
+                    card.style.pointerEvents = 'auto';
+                    
+                    void card.offsetWidth; // Force Reflow to guarantee animation plays
+                    
+                    card.style.transition = 'opacity 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease';
+                    card.style.opacity = '1';
+                } else {
+                    // Hide gracefully
+                    card.style.transition = 'opacity 0.3s ease';
+                    card.style.opacity = '0';
+                    card.style.pointerEvents = 'none';
+                    
+                    setTimeout(() => {
+                        if (card.style.opacity === '0') {
+                            card.style.visibility = 'hidden';
+                        }
+                    }, 300);
+                }
+            });
+        }
+
         // --- EVENT LISTENERS ---
 
-        document.getElementById('altalanos-filter').addEventListener('change', function() {
-            state.altalanos.filter = this.value;
-            state.altalanos.largePage = 0; 
-            state.altalanos.smallPage = 0;
-            renderSection('altalanos');
-        });
+        document.getElementById('altalanos-filter').addEventListener('change', () => applyVisibilityFilter('altalanos'));
+        document.getElementById('copilot-filter').addEventListener('change', () => applyVisibilityFilter('copilot'));
 
-        document.getElementById('copilot-filter').addEventListener('change', function() {
-            state.copilot.filter = this.value;
-            state.copilot.largePage = 0;
-            state.copilot.smallPage = 0;
-            renderSection('copilot');
-        });
-
-        // Pagination Buttons Helper
         function setupPagination(category, sizeType, btnId, direction) {
             document.getElementById(btnId).addEventListener('click', () => {
                 const itemsPerPage = sizeType === 'large' ? 1 : 4;
-                const filterVal = state[category].filter;
-                const items = siteData[category][sizeType + 'Cards'].filter(c => filterVal === 'all' || c.level === filterVal);
+                const fullItemsArray = siteData[category][sizeType + 'Cards'];
                 
                 if (direction === 'prev' && state[category][sizeType + 'Page'] > 0) {
                     state[category][sizeType + 'Page']--;
-                    renderGrid(category, sizeType, items, itemsPerPage);
-                } else if (direction === 'next' && state[category][sizeType + 'Page'] < Math.ceil(items.length / itemsPerPage) - 1) {
+                    renderGrid(category, sizeType, fullItemsArray, itemsPerPage);
+                } else if (direction === 'next' && state[category][sizeType + 'Page'] < Math.ceil(fullItemsArray.length / itemsPerPage) - 1) {
                     state[category][sizeType + 'Page']++;
-                    renderGrid(category, sizeType, items, itemsPerPage);
+                    renderGrid(category, sizeType, fullItemsArray, itemsPerPage);
                 }
             });
         }
