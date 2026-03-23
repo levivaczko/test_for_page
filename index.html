@@ -14,7 +14,7 @@
     
     @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
     .animate-in { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
+    .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; }
     
     /* --- SECTION HEADINGS & FILTERS --- */
     .section { margin-bottom: 80px; }
@@ -37,10 +37,10 @@
 
     .grid-altalanos-v2 { display: grid; grid-template-columns: 2.6fr 1fr; gap: 40px; }
     
-    .guides-wrapper { display: flex; gap: 20px; width: 100%; height: 100%; }
+    .guides-wrapper { display: flex; gap: 20px; width: 100%; height: 100%; transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); }
     
     /* Columns wrap content and pagination */
-    .guides-column { flex: 1; display: flex; flex-direction: column; gap: 15px; height: 100%; }
+    .guides-column { flex: 1; display: flex; flex-direction: column; gap: 15px; height: 100%; transition: all 0.6s cubic-bezier(0.25, 0.8, 0.25, 1); overflow: hidden;}
     
     /* The animated container holding the cards */
     .grid-content { flex: 1; transition: opacity 0.3s ease; }
@@ -49,9 +49,34 @@
     .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 20px; height: 100%; }
     .large-grid { display: flex; height: 100%; }
     #altalanos-wrapper .small-grid .card { aspect-ratio: unset; } /* Fix height fill */
+
+    /* Structural collapse logic */
+    .guides-wrapper.state-right-only .guides-left { flex: 0; opacity: 0; margin-right: -20px; pointer-events: none; }
+    .guides-wrapper.state-left-only .guides-right { flex: 0; opacity: 0; margin-left: -20px; pointer-events: none; }
     
-    /* --- PAGINATION UI --- */
-    .pagination-controls { display: none; align-items: center; justify-content: center; gap: 8px; margin-top: auto; padding-top: 10px; }
+    /* --- PAGINATION UI WITH HOVER ANIMATION --- */
+    .pagination-controls { 
+        display: none; /* Removed from layout unless it has pages */
+        align-items: center; justify-content: center; gap: 8px; margin-top: auto; padding-top: 10px; 
+        
+        /* Hidden by default, slides up on hover */
+        opacity: 0; 
+        pointer-events: none;
+        transform: translateY(10px);
+        transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    }
+    
+    /* When JS detects >1 page, it adds this class so the block exists in the layout */
+    .pagination-controls.has-pages {
+        display: flex; 
+    }
+
+    /* When hovering anywhere over the column, fade in the pagination */
+    .guides-column:hover .pagination-controls.has-pages {
+        opacity: 1;
+        pointer-events: auto;
+        transform: translateY(0);
+    }
     
     .page-arrow { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #e1dfdd; background: white; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #666; transition: background 0.2s; font-family: sans-serif; font-size: 14px; }
     .page-arrow:hover:not(:disabled) { background: #f3f2f1; color: #000; }
@@ -93,7 +118,7 @@
             <div class="grid-altalanos-v2">
                 <div class="guides-wrapper" id="altalanos-wrapper">
                     
-                    <div class="guides-column">
+                    <div class="guides-column guides-left">
                         <div class="grid-content large-grid" id="alt-large-content"></div>
                         <div class="pagination-controls" id="alt-large-pagination">
                             <button class="page-arrow" id="alt-large-prev">&lt;</button>
@@ -102,7 +127,7 @@
                         </div>
                     </div>
                     
-                    <div class="guides-column">
+                    <div class="guides-column guides-right">
                         <div class="grid-content small-grid" id="alt-small-content"></div>
                         <div class="pagination-controls" id="alt-small-pagination">
                             <button class="page-arrow" id="alt-small-prev">&lt;</button>
@@ -116,11 +141,11 @@
                 <div class="links-section">
                     <div class="links-title">Hasznos linkek</div>
                     <div class="links-container">
-                        <a href="INSERT_LINK_HERE" class="link-item">M365 Copilot Chat</a>
-                        <a href="INSERT_LINK_HERE" class="link-item">Iránymutatók</a>
-                        <a href="INSERT_LINK_HERE" class="link-item">AI adatvédelmi kérdésed van?</a>
-                        <a href="INSERT_LINK_HERE" class="link-item">Kérdésed van?</a>
-                        <a href="INSERT_LINK_HERE" class="link-item">AI Horizont Kollégák</a>
+                        <a href="#" class="link-item">M365 Copilot Chat</a>
+                        <a href="#" class="link-item">Iránymutatók</a>
+                        <a href="#" class="link-item">AI adatvédelmi kérdésed van?</a>
+                        <a href="#" class="link-item">Kérdésed van?</a>
+                        <a href="#" class="link-item">AI Horizont Kollégák</a>
                     </div>
                 </div>
             </div>
@@ -131,11 +156,11 @@
                 <h2 class="section-title">Videós <span>útmutatók</span></h2>
             </div>
             <div class="video-grid">
-                <a href="INSERT_LINK_HERE" class="video-placeholder">
+                <a href="#" class="video-placeholder">
                     <div class="play-button"></div>
                     <div style="position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 4px; font-size: 14px;">1:14</div>
                 </a>
-                <a href="INSERT_LINK_HERE" class="video-placeholder">
+                <a href="#" class="video-placeholder">
                     <div class="play-button"></div>
                     <div style="position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 4px; font-size: 14px;">2:30</div>
                 </a>
@@ -155,7 +180,7 @@
             <div class="grid-altalanos-v2" style="grid-template-columns: 1fr;"> 
                 <div class="guides-wrapper" id="copilot-wrapper">
                     
-                    <div class="guides-column">
+                    <div class="guides-column guides-left">
                         <div class="grid-content large-grid" id="cop-large-content"></div>
                         <div class="pagination-controls" id="cop-large-pagination">
                             <button class="page-arrow" id="cop-large-prev">&lt;</button>
@@ -164,7 +189,7 @@
                         </div>
                     </div>
                     
-                    <div class="guides-column">
+                    <div class="guides-column guides-right">
                         <div class="grid-content small-grid" id="cop-small-content"></div>
                         <div class="pagination-controls" id="cop-small-pagination">
                             <button class="page-arrow" id="cop-small-prev">&lt;</button>
@@ -197,7 +222,7 @@
                 renderSection('altalanos');
                 renderSection('copilot');
             })
-            .catch(error => console.error("Nem sikerült betölteni a data.json fájlt. (Ha lokálisan vagy, töltsd fel GitHubra!)", error));
+            .catch(error => console.error("Nem sikerült betölteni a data.json fájlt. Kérlek használj webszervert vagy töltsd fel GitHubra!", error));
 
         // 2. Render an entire section based on current filter
         function renderSection(category) {
@@ -209,6 +234,13 @@
             // Filter arrays
             const fLarge = data.largeCards.filter(c => filterVal === 'all' || c.level === filterVal);
             const fSmall = data.smallCards.filter(c => filterVal === 'all' || c.level === filterVal);
+            
+            // STRUCTURAL COLLAPSE LOGIC
+            const wrapper = document.getElementById(`${category}-wrapper`);
+            wrapper.classList.remove('state-all', 'state-left-only', 'state-right-only');
+            if (fLarge.length > 0 && fSmall.length > 0) wrapper.classList.add('state-all');
+            else if (fLarge.length > 0) wrapper.classList.add('state-left-only');
+            else if (fSmall.length > 0) wrapper.classList.add('state-right-only');
             
             // Render independent grids
             renderGrid(category, 'large', fLarge, 1);
@@ -250,7 +282,7 @@
                 
                 // Pagination UI updates
                 if (totalPages > 1) {
-                    pagControls.style.display = 'flex';
+                    pagControls.classList.add('has-pages'); // Adds display:flex so it can be hovered
                     document.getElementById(`${prefix}-${sizeType}-prev`).disabled = (currentPage === 0);
                     document.getElementById(`${prefix}-${sizeType}-next`).disabled = (currentPage === totalPages - 1);
                     
@@ -260,7 +292,7 @@
                         dotsContainer.innerHTML += `<div class="page-dot ${i === currentPage ? 'active' : ''}"></div>`;
                     }
                 } else {
-                    pagControls.style.display = 'none';
+                    pagControls.classList.remove('has-pages'); // Hides entirely
                 }
                 
                 // Fade back in
@@ -270,7 +302,6 @@
 
         // --- EVENT LISTENERS ---
 
-        // Filters
         document.getElementById('altalanos-filter').addEventListener('change', function() {
             state.altalanos.filter = this.value;
             state.altalanos.largePage = 0; // Reset pages on filter
