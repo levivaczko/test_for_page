@@ -63,7 +63,6 @@
     .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; flex: 1; height: 100%; }
     .large-grid { display: flex; flex: 1; height: 100%; }
     
-    /* THE FIX: Force large cards to fill their box, and strip rigid aspect ratio from ALL small cards so they adapt perfectly */
     .large-grid .card { height: 100%; width: 100%; }
     .small-grid .card { aspect-ratio: unset !important; height: 100%; }
     
@@ -93,42 +92,10 @@
 
     /* --- USEFUL LINKS --- */
     .links-section { display: flex; flex-direction: column; }
-    .links-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
-    .links-container { display: flex; flex-direction: column; gap: 10px; }
     
-    .link-item { 
-        border: 1px solid #005AFA; 
-        border-radius: 4px; 
-        padding: 12px 16px; 
-        background: white; 
-        color: #000; 
-        text-decoration: none; 
-        font-weight: 600; 
-        font-size: 14px; 
-        transition: background-color 0.2s, transform 0.2s; 
-        display: flex; 
-        align-items: center; 
-        gap: 12px; 
-    }
-    .link-item:hover { background-color: #f3f2f1; transform: translateX(4px); }
-    
-    .link-icon { 
-        width: 22px; 
-        height: 22px; 
-        flex-shrink: 0; 
-        display: flex; 
-        align-items: center; 
-        justify-content: center; 
-    }
-    .link-icon svg, .link-icon img { width: 100%; height: 100%; object-fit: contain; }
-
     /* --- VIDEO PLACEHOLDER --- */
     .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
-    .video-placeholder { background: url('img/video-bg-placeholder.jpg') center/cover no-repeat #e1dfdd; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; border-radius: 8px; position: relative; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-decoration: none; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);}
-    .video-placeholder:hover { transform: scale(1.02); box-shadow: 0 12px 24px rgba(0,0,0,0.15); }
-    .play-button { width: 64px; height: 64px; background-color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(0,0,0,0.15); transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-    .video-placeholder:hover .play-button { transform: scale(1.1); }
-    .play-button::after { content: ''; width: 0; height: 0; border-top: 16px solid transparent; border-bottom: 16px solid transparent; border-left: 26px solid #005AFA; margin-left: 8px; }
+    .video-placeholder { background: transparent; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; border-radius: 8px; position: relative; }
 </style>
 </head>
 <body>
@@ -168,63 +135,17 @@
                     
                 </div>
 
-                <div class="links-section">
-                    <div class="links-title">Hasznos linkek</div>
-                    <div class="links-container">
-                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
-                            <div class="link-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="#008080" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20"></path><path d="M8 7h6M8 11h8M8 15h4"></path></svg>
-                            </div>
-                            Körber-PTE MI BEVEZETŐ KURZUS
-                        </a>
-                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
-                            <div class="link-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="#D83B01" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
-                            </div>
-                            M365 Copilot Chat
-                        </a>
-                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
-                            <div class="link-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                            </div>
-                            Iránymutatók
-                        </a>
-                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
-                            <div class="link-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><circle cx="10" cy="13" r="2"></circle><line x1="11.41" y1="14.41" x2="14" y2="17"></line></svg>
-                            </div>
-                            AI adatvédelmi kérdésed van?
-                        </a>
-                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
-                            <div class="link-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                            </div>
-                            Kérdésed van?
-                        </a>
-                        <a href="INSERT_LINK_HERE" class="link-item" target="_blank" rel="noopener noreferrer">
-                            <div class="link-icon">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                            </div>
-                            AI Horizont Kollégák
-                        </a>
-                    </div>
-                </div>
+                <div class="links-section"></div>
             </div>
         </div>
 
-        <div class="section animate-in delay-2">
+        <div class="section" style="visibility: hidden; pointer-events: none;">
             <div class="section-header">
-                <h2 class="section-title">Videós <span>útmutatók</span></h2>
+                <h2 class="section-title">Videós útmutatók</h2>
             </div>
             <div class="video-grid">
-                <a href="INSERT_LINK_HERE" class="video-placeholder" target="_blank" rel="noopener noreferrer">
-                    <div class="play-button"></div>
-                    <div style="position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 4px; font-size: 14px;">1:14</div>
-                </a>
-                <a href="INSERT_LINK_HERE" class="video-placeholder" target="_blank" rel="noopener noreferrer">
-                    <div class="play-button"></div>
-                    <div style="position: absolute; bottom: 12px; left: 12px; background: rgba(0,0,0,0.8); color: white; padding: 4px 10px; border-radius: 4px; font-size: 14px;">2:30</div>
-                </a>
+                <div class="video-placeholder"></div>
+                <div class="video-placeholder"></div>
             </div>
         </div>
 
@@ -304,8 +225,6 @@
             const pageItems = fullItemsArray.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage);
             
             let aspectClass = (category === 'altalanos' && sizeType === 'large') ? 'aspect-1-1' : 'aspect-4-3';
-            
-            // THE JS FIX: Remove aspect class from ALL small cards so they conform to the large card's height!
             if (sizeType === 'small') aspectClass = ''; 
 
             const htmlString = pageItems.map(c => {
