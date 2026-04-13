@@ -2,62 +2,88 @@
     "altalanos": {
         "largeCards": [
             {
-                "link": "#",
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAJioTXhROFQZ8uyQ-Mx5tOAe7O33WPygHmjlfjCr1MWA0?e=OLSGQN",
                 "img": "img/csempe_1_1_kezdo_langdock.png",
-                "level": "kezdo"
+                "level": "kezdo",
+                "isNew": true
             },
             {
-                "link": "https://google.com",
+                "title": "Automatizált tömeges email küldés",
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAlTYukroLrSL1GIAsVEj_tAduVcvneA92nUT_fAkebSBg?e=zyasD2",
                 "img": "img/csempe_1_1_halado_automatizalt_tomeges_email_kuldes.png",
-                "level": "halado"
+                "level": "halado",
+                "isNew": false
             }
         ],
         "smallCards": [
             {
-                "link": "#",
-                "img": "img/csempe_1_1_halado_shopfloor_layout_felulet_fejlesztes.png",
-                "level": "halado"
-            },
-            {
-                "link": "#",
-                "img": "img/csempe_1_1_halado_gepkonyv_forditas.png",
-                "level": "halado"
-            },
-            {
-                "link": "#",
-                "img": "img/csempe_1_1_halado_excel_makrok_keszitese.png",
-                "level": "halado"
-            },
-            {
-                "link": "#",
+                "title": "Mermaid diagram generálás",
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAKK8C6ZwRxQ5GPpk53AR-0AYs0GVrSYIpDuO87M9BlE7o?e=8Ucvev",
                 "img": "img/csempe_1_1_halado_mermaid_diagram_generalas.png",
-                "level": "halado"
+                "level": "halado",
+                "isNew": false
+            },
+            {
+                "title": "Gépkönyv fordítás",
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDMP1rgeW-_TLQBgtozj8kjAQlncfabprbgKU3TfCGsE1w?e=pWiL0D",
+                "img": "img/csempe_1_1_halado_gepkonyv_forditas.png",
+                "level": "halado",
+                "isNew": false
+            },
+            {
+                "title": "Shopfloor layout felület fejlesztés",
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQA0Ho-5OzinT42TFt4cT6iWAfk3bXp4ndv_Vjj9F1rSC2M?e=FHThFZ",
+                "img": "img/csempe_1_1_halado_shopfloor_layout_felulet_fejlesztes.png",
+                "level": "halado",
+                "isNew": false
+            },
+            {
+                "title": "Excel makrók készítése",
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQBRi9JO9mFZQYpcwl7oe9V7AQSY49ioLafa4I03Fd5N_C4?e=5Js18P",
+                "img": "img/csempe_1_1_halado_excel_makrok_keszitese.png",
+                "level": "halado",
+                "isNew": false
+            },
+            {
+                "title": "asd",
+                "link": "https://google.com",
+                "img": "img/asd",
+                "level": "kezdo",
+                "isNew": true
             }
         ]
     },
     "copilot": {
         "largeCards": [
             {
-                "link": "#",
+                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Copilot-Chat-Ismerteto.aspx?csf=1&web=1&share=IQBYNcZpWYyYR7mSdizgOYUOAQjFCWRoMLyYrGJ0Na48IAc&e=RijMk2",
                 "img": "img/csempe_4_3_v2_copilot_chat_hasznalata.png",
-                "level": "kezdo"
+                "level": "kezdo",
+                "title": "Copilot Chat ismertető",
+                "isNew": true
             }
         ],
         "smallCards": [
             {
-                "link": "#",
-                "img": "img/csempe_4_3_v2.png",
-                "level": "kezdo"
-            },
-            {
-                "link": "#",
+                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Web-Scarping-Copilot_Chat.aspx?csf=1&web=1&share=IQDNObMTaCIdRILx5ZQCgpvMAaoXtNLh3qOz_t6l8YcMoss&e=jqRz2d",
                 "img": "img/csempe_4_3_v2_adatgyujtes_weboldalrol.png",
-                "level": "halado"
+                "level": "halado",
+                "title": "Web scraping Copilot Chattel",
+                "isNew": true
             },
             {
-                "link": "#",
+                "title": "Email vázlat készítése Copilot Chattel",
+                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Email-Vazlat-Keszites-Copliot_Chat.aspx?csf=1&web=1&share=IQAgLkHyMBRbRIYFFNCPo7uUAdKRXr-ciTaZCQHImaN-y-g&e=mnVun9",
+                "img": "img/csempe_4_3_v2.png",
+                "level": "kezdo",
+                "isNew": false
+            },
+            {
+                "title": "Office Script fejlesztés Copilot Chattel",
+                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Office-Script-Fejlesztes-Copilot_Chat.aspx?csf=1&web=1&share=IQB5XEyUd_iPQpQ8UL0SngLCAb27x9Zr6zbDlxbToc4hn0o&e=UGRUBX",
                 "img": "img/csempe_4_3_v2_office_script_fejlesztés.png",
-                "level": "halado"
+                "level": "halado",
+                "isNew": false
             }
         ]
     }
