@@ -16,6 +16,57 @@
     .animate-in { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; }
     
+    /* --- KERESŐ (SEARCH BAR & DROPDOWN) --- */
+    .search-container { margin-bottom: 50px; display: flex; justify-content: flex-end; position: relative; z-index: 100; }
+    .search-wrapper { position: relative; width: 100%; max-width: 400px; }
+    
+    .search-input { 
+        width: 100%; 
+        padding: 12px 20px 12px 40px;
+        font-size: 15px; 
+        line-height: 1.2;
+        border-radius: 24px; border: 1px solid #c8c6c4; font-family:  Arial; 
+        transition: border-color 0.3s, box-shadow 0.3s;
+        background-color: #f3f2f1;
+        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3ccircle cx='11' cy='11' r='8'%3e%3c/circle%3e%3cline x1='21' y1='21' x2='16.65' y2='16.65'%3e%3c/line%3e%3c/svg%3e");
+        background-repeat: no-repeat; background-position: 12px center; background-size: 18px;
+    }
+    .search-input:focus { outline: none; border-color: #005AFA; box-shadow: 0 0 0 3px rgba(0, 90, 250, 0.2); background-color: #fff; }
+
+    .search-dropdown {
+        position: absolute;
+        top: calc(100% + 8px);
+        left: 0;
+        width: 100%;
+        background: #fff;
+        border-radius: 12px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+        border: 1px solid #e1dfdd;
+        max-height: 350px;
+        overflow-y: auto;
+        display: none;
+    }
+    .search-dropdown.active { display: block; }
+    
+    .search-dropdown::-webkit-scrollbar { width: 6px; }
+    .search-dropdown::-webkit-scrollbar-track { background: transparent; margin: 8px 0; }
+    .search-dropdown::-webkit-scrollbar-thumb { background-color: #c8c6c4; border-radius: 10px; }
+    .search-dropdown::-webkit-scrollbar-thumb:hover { background-color: #a19f9d; }
+
+    .search-dropdown { scrollbar-width: thin; scrollbar-color: #c8c6c4 transparent; }
+    
+    .search-result-item { display: flex; align-items: center; padding: 12px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #f3f2f1; transition: background-color 0.2s; overflow: hidden; }
+    .search-result-item:last-child { border-bottom: none; }
+    .search-result-item:hover { background-color: #f3f2f1; }
+    
+    .search-result-img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; margin-right: 12px; border: 1px solid #e1dfdd; flex-shrink: 0; }
+    
+    .search-result-text-container { display: flex; align-items: center; overflow: hidden; flex: 1; }
+    .search-result-title-text { font-size: 14px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1; }
+    .search-result-level { color: #fd8723; font-size: 12px; font-weight: 500; margin-left: 8px; text-transform: capitalize; letter-spacing: 0.5px; flex-shrink: 0; white-space: nowrap; }
+
+    .search-no-results { padding: 15px; text-align: center; color: #666; font-size: 14px; }
+
     /* --- SECTION HEADINGS & FILTERS --- */
     .section { margin-bottom: 80px; }
     .section-header { border-bottom: 1px solid #c8c6c4; margin-bottom: 24px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
@@ -47,49 +98,32 @@
     .card:hover img { transform: scale(1.04); }
     .card:hover { transform: translateY(-6px); box-shadow: 0 14px 28px rgba(0,0,0,0.15); z-index: 10; }
 
-    /* --- PERFECTLY CENTERED HTML LEVEL BADGE --- */
-    .level-badge {
-        position: absolute;
-        bottom: 8%; 
-        left: 8%;
-        background-color: #FFD100;
-        color: #000;
-        font-weight: 600;
-        border-radius: 50px; 
-        z-index: 5;
-        text-transform: capitalize;
-        pointer-events: none; 
-        
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        line-height: 1.5;
-        letter-spacing: 0.2px;
+    /* --- SKELETON LOADER --- */
+    @keyframes shimmer {
+        0% { background-position: -1000px 0; }
+        100% { background-position: 1000px 0; }
     }
+    .skeleton {
+        background: #f3f2f1;
+        background-image: linear-gradient(90deg, #f3f2f1 0px, #e1dfdd 50%, #f3f2f1 100%);
+        background-size: 1000px 100%;
+        animation: shimmer 2s infinite linear forwards;
+        cursor: default;
+        pointer-events: none;
+    }
+    .skeleton:hover { transform: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
 
+    .new-badge { position: absolute; top: 12px; right: 12px; background-color: rgba(253, 135, 35, 0.9); color: #fff; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 4px; z-index: 6; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(227, 0, 15, 0.3); pointer-events: none; }
+    .level-badge { position: absolute; bottom: 8%; left: 8%; background-color: #FFD100; color: #000; font-weight: 600; border-radius: 50px; z-index: 5; text-transform: capitalize; pointer-events: none; display: inline-flex; align-items: center; justify-content: center; line-height: 1.5; letter-spacing: 0.2px; }
     .large-grid .level-badge { font-size: 16px; padding: 7px 20px 5px 20px; }
     .small-grid .level-badge { font-size: 12px; padding: 5px 14px 3px 14px; }
     
     .aspect-4-3 { aspect-ratio: 4 / 3; height: auto; }
     .aspect-1-1 { aspect-ratio: 1 / 1; height: auto; }
 
-    /* --- NEW GRID VALUES APPLIED HERE --- */
     .grid-altalanos-v2 { display: grid; grid-template-columns: 3.5fr 1fr; gap: 15px; }
-    
     .guides-wrapper { display: flex; gap: 12px; width: 100%; height: 100%; }
-    
-    .guides-column { 
-        flex: 1; 
-        display: flex; 
-        flex-direction: column; 
-        height: 100%; 
-        overflow: hidden; 
-        position: relative;
-        padding-bottom: 50px;
-        padding-top: 15px; 
-        margin-top: -15px; 
-    }
-    
+    .guides-column { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; padding-bottom: 50px; padding-top: 15px; margin-top: -15px; }
     .grid-content { flex: 1; display: flex; flex-direction: column; min-height: 0;}
     
     .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; flex: 1; height: 100%; }
@@ -99,18 +133,7 @@
     .small-grid .card { aspect-ratio: unset !important; height: 100%; }
     
     /* --- PAGINATION UI --- */
-    .pagination-controls { 
-        position: absolute; 
-        bottom: 0; left: 0; width: 100%; height: 50px;
-        display: none; 
-        align-items: center; justify-content: center; gap: 12px; 
-        opacity: 0; 
-        pointer-events: none;
-        transform: translateY(10px);
-        transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
-        z-index: 20;
-    }
-    
+    .pagination-controls { position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; display: none; align-items: center; justify-content: center; gap: 12px; opacity: 0; pointer-events: none; transform: translateY(10px); transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 20; }
     .pagination-controls.has-pages { display: flex; }
     .guides-column:hover .pagination-controls.has-pages { opacity: 1; pointer-events: auto; transform: translateY(0); }
     
@@ -135,6 +158,13 @@
 
     <div class="container">
 
+        <div class="search-container animate-in">
+            <div class="search-wrapper">
+                <input type="text" id="global-search" class="search-input" placeholder="Keresés az útmutatók között..." autocomplete="off">
+                <div id="search-dropdown" class="search-dropdown"></div>
+            </div>
+        </div>
+
         <div class="section animate-in delay-1">
             <div class="section-header">
                 <h2 class="section-title">Általános <span>útmutatók</span></h2>
@@ -149,7 +179,9 @@
                 <div class="guides-wrapper" id="altalanos-wrapper">
                     
                     <div class="guides-column guides-left">
-                        <div class="grid-content large-grid" id="alt-large-content"></div>
+                        <div class="grid-content large-grid" id="alt-large-content">
+                            <div class="card skeleton aspect-1-1"></div>
+                        </div>
                         <div class="pagination-controls" id="alt-large-pagination">
                             <button class="page-arrow" id="alt-large-prev">&lt;</button>
                             <div class="page-dots" id="alt-large-dots"></div>
@@ -158,7 +190,12 @@
                     </div>
                     
                     <div class="guides-column guides-right">
-                        <div class="grid-content small-grid" id="alt-small-content"></div>
+                        <div class="grid-content small-grid" id="alt-small-content">
+                            <div class="card skeleton"></div>
+                            <div class="card skeleton"></div>
+                            <div class="card skeleton"></div>
+                            <div class="card skeleton"></div>
+                        </div>
                         <div class="pagination-controls" id="alt-small-pagination">
                             <button class="page-arrow" id="alt-small-prev">&lt;</button>
                             <div class="page-dots" id="alt-small-dots"></div>
@@ -179,8 +216,8 @@
                 <h2 class="section-title">Videós <span>útmutatók</span></h2>
             </div>
             <div class="video-grid">
-                <div class="video-placeholder"></div>
-                <div class="video-placeholder"></div>
+                <div class="video-placeholder skeleton"></div>
+                <div class="video-placeholder skeleton"></div>
             </div>
         </div>
 
@@ -198,7 +235,9 @@
                 <div class="guides-wrapper" id="copilot-wrapper">
                     
                     <div class="guides-column guides-left">
-                        <div class="grid-content large-grid" id="cop-large-content"></div>
+                        <div class="grid-content large-grid" id="cop-large-content">
+                            <div class="card skeleton aspect-4-3"></div>
+                        </div>
                         <div class="pagination-controls" id="cop-large-pagination">
                             <button class="page-arrow" id="cop-large-prev">&lt;</button>
                             <div class="page-dots" id="cop-large-dots"></div>
@@ -207,7 +246,12 @@
                     </div>
                     
                     <div class="guides-column guides-right">
-                        <div class="grid-content small-grid" id="cop-small-content"></div>
+                        <div class="grid-content small-grid" id="cop-small-content">
+                            <div class="card skeleton"></div>
+                            <div class="card skeleton"></div>
+                            <div class="card skeleton"></div>
+                            <div class="card skeleton"></div>
+                        </div>
                         <div class="pagination-controls" id="cop-small-pagination">
                             <button class="page-arrow" id="cop-small-prev">&lt;</button>
                             <div class="page-dots" id="cop-small-dots"></div>
@@ -222,7 +266,11 @@
     </div>
 
     <script>
+        window.history.scrollRestoration = 'manual';
+        window.scrollTo(0, 0);
+
         let siteData = null;
+        let currentSearchQuery = "";
         
         const state = {
             altalanos: { largePage: 0, smallPage: 0 },
@@ -237,6 +285,66 @@
                 renderSection('copilot', 'fade');
             })
             .catch(error => console.error("Hiba a JSON betöltésekor:", error));
+
+        function getAllCardsFlattened() {
+            if (!siteData) return [];
+            let all = [];
+            for (const category in siteData) {
+                if(siteData[category].largeCards) all = all.concat(siteData[category].largeCards);
+                if(siteData[category].smallCards) all = all.concat(siteData[category].smallCards);
+            }
+            return all;
+        }
+
+        const searchInput = document.getElementById('global-search');
+        const searchDropdown = document.getElementById('search-dropdown');
+
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase().trim();
+            
+            if (query === "") {
+                searchDropdown.classList.remove('active');
+                searchDropdown.innerHTML = '';
+            } else {
+                const allCards = getAllCardsFlattened();
+                const matchedCards = allCards.filter(c => c.title && c.title.toLowerCase().includes(query));
+                
+                if (matchedCards.length > 0) {
+                    searchDropdown.innerHTML = matchedCards.map(c => {
+                        let safeLink = c.link;
+                        if (safeLink !== '#' && !safeLink.startsWith('http') && !safeLink.startsWith('/')) {
+                            safeLink = 'https://' + safeLink;
+                        }
+                        const badgeText = c.level === 'kezdo' ? 'Kezdő' : 'Haladó';
+                        
+                        return `
+                            <a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="search-result-item">
+                                <img src="${c.img}" class="search-result-img" alt="borítókép">
+                                <div class="search-result-text-container">
+                                    <span class="search-result-title-text" title="${c.title}">${c.title}</span>
+                                    <span class="search-result-level">• ${badgeText}</span>
+                                </div>
+                            </a>
+                        `;
+                    }).join('');
+                } else {
+                    searchDropdown.innerHTML = `<div class="search-no-results">Nincs találat...</div>`;
+                }
+                searchDropdown.classList.add('active');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
+                searchDropdown.classList.remove('active');
+            }
+        });
+
+        searchInput.addEventListener('focus', (e) => {
+            if (e.target.value.trim() !== "") {
+                searchDropdown.classList.add('active');
+            }
+        });
 
         function renderSection(category, animType) {
             if (!siteData) return;
@@ -270,8 +378,10 @@
                 
                 const badgeText = c.level === 'kezdo' ? 'Kezdő' : 'Haladó';
                 const badgeHTML = `<div class="level-badge">${badgeText}</div>`;
+                const newBadgeHTML = c.isNew ? `<div class="new-badge">ÚJ</div>` : ``;
 
                 return `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="card image-card ${aspectClass} filterable-card" data-level="${c.level}">
+                            ${newBadgeHTML}
                             <img src="${c.img}">
                             ${badgeHTML}
                         </a>`;
