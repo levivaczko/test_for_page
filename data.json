@@ -43,13 +43,6 @@
                 "img": "img/csempe_1_1_halado_excel_makrok_keszitese.png",
                 "level": "halado",
                 "isNew": false
-            },
-            {
-                "title": "asd",
-                "link": "https://google.com",
-                "img": "img/asd",
-                "level": "kezdo",
-                "isNew": true
             }
         ]
     },
