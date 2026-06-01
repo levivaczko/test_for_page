@@ -167,6 +167,58 @@
 
         <div class="section animate-in delay-1">
             <div class="section-header">
+                <h2 class="section-title">Copilot <span>útmutatók</span></h2>
+                <select class="inline-filter" id="copilot-filter">
+                    <option value="all">Minden szint</option>
+                    <option value="kezdo">Kezdő</option>
+                    <option value="halado">Haladó</option>
+                </select>
+            </div>
+            
+            <div class="grid-altalanos-v2" style="grid-template-columns: 1fr;"> 
+                <div class="guides-wrapper" id="copilot-wrapper">
+                    
+                    <div class="guides-column guides-left">
+                        <div class="grid-content large-grid" id="cop-large-content">
+                            <div class="card skeleton aspect-4-3"></div>
+                        </div>
+                        <div class="pagination-controls" id="cop-large-pagination">
+                            <button class="page-arrow" id="cop-large-prev">&lt;</button>
+                            <div class="page-dots" id="cop-large-dots"></div>
+                            <button class="page-arrow" id="cop-large-next">&gt;</button>
+                        </div>
+                    </div>
+                    
+                    <div class="guides-column guides-right">
+                        <div class="grid-content small-grid" id="cop-small-content">
+                            <div class="card skeleton"></div>
+                            <div class="card skeleton"></div>
+                            <div class="card skeleton"></div>
+                            <div class="card skeleton"></div>
+                        </div>
+                        <div class="pagination-controls" id="cop-small-pagination">
+                            <button class="page-arrow" id="cop-small-prev">&lt;</button>
+                            <div class="page-dots" id="cop-small-dots"></div>
+                            <button class="page-arrow" id="cop-small-next">&gt;</button>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+
+        <div class="section animate-in delay-2">
+            <div class="section-header">
+                <h2 class="section-title">Videós <span>útmutatók</span></h2>
+            </div>
+            <div class="video-grid">
+                <div class="video-placeholder skeleton"></div>
+                <div class="video-placeholder skeleton"></div>
+            </div>
+        </div>
+
+        <div class="section animate-in delay-3">
+            <div class="section-header">
                 <h2 class="section-title">Általános <span>útmutatók</span></h2>
                 <select class="inline-filter" id="altalanos-filter">
                     <option value="all">Minden szint</option>
@@ -207,58 +259,6 @@
 
                 <div class="links-section">
                     <div class="links-title">Hasznos linkek</div>
-                </div>
-            </div>
-        </div>
-
-        <div class="section animate-in delay-2">
-            <div class="section-header">
-                <h2 class="section-title">Videós <span>útmutatók</span></h2>
-            </div>
-            <div class="video-grid">
-                <div class="video-placeholder skeleton"></div>
-                <div class="video-placeholder skeleton"></div>
-            </div>
-        </div>
-
-        <div class="section animate-in delay-3">
-            <div class="section-header">
-                <h2 class="section-title">Copilot <span>útmutatók</span></h2>
-                <select class="inline-filter" id="copilot-filter">
-                    <option value="all">Minden szint</option>
-                    <option value="kezdo">Kezdő</option>
-                    <option value="halado">Haladó</option>
-                </select>
-            </div>
-            
-            <div class="grid-altalanos-v2" style="grid-template-columns: 1fr;"> 
-                <div class="guides-wrapper" id="copilot-wrapper">
-                    
-                    <div class="guides-column guides-left">
-                        <div class="grid-content large-grid" id="cop-large-content">
-                            <div class="card skeleton aspect-4-3"></div>
-                        </div>
-                        <div class="pagination-controls" id="cop-large-pagination">
-                            <button class="page-arrow" id="cop-large-prev">&lt;</button>
-                            <div class="page-dots" id="cop-large-dots"></div>
-                            <button class="page-arrow" id="cop-large-next">&gt;</button>
-                        </div>
-                    </div>
-                    
-                    <div class="guides-column guides-right">
-                        <div class="grid-content small-grid" id="cop-small-content">
-                            <div class="card skeleton"></div>
-                            <div class="card skeleton"></div>
-                            <div class="card skeleton"></div>
-                            <div class="card skeleton"></div>
-                        </div>
-                        <div class="pagination-controls" id="cop-small-pagination">
-                            <button class="page-arrow" id="cop-small-prev">&lt;</button>
-                            <div class="page-dots" id="cop-small-dots"></div>
-                            <button class="page-arrow" id="cop-small-next">&gt;</button>
-                        </div>
-                    </div>
-                    
                 </div>
             </div>
         </div>
