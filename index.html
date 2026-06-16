@@ -5,153 +5,80 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SharePoint AI Page Recreation</title>
 <style>
-    /* --- FONTS & BASE STYLES --- */
     @font-face { font-family: 'Koerber'; src: url('Koerber-Regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
     @font-face { font-family: 'Koerber'; src: url('Koerber-Semibold.woff2') format('woff2'); font-weight: 600; font-display: swap; }
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Koerber', sans-serif; background-color: #ffffff; color: #333; overflow-x: hidden; }
     .container { max-width: 1250px; margin: 0 auto; padding: 20px; }
-    
     @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
     .animate-in { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-    .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; }
-    
-    /* --- KERESŐ (SEARCH BAR & DROPDOWN) --- */
+    .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
     .search-container { margin-bottom: 50px; position: relative; z-index: 100; display: block; }
     .search-wrapper { position: relative; width: 400px; max-width: 100%; margin-left: 0; }
-    
-    .search-input { 
-        width: 100%; 
-        padding: 12px 20px 12px 40px;
-        font-size: 15px; 
-        line-height: 1.2;
-        border-radius: 24px; border: 1px solid #c8c6c4; font-family:  Arial; 
-        transition: border-color 0.3s, box-shadow 0.3s;
-        background-color: #f3f2f1;
-        background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3ccircle cx='11' cy='11' r='8'%3e%3c/circle%3e%3cline x1='21' y1='21' x2='16.65' y2='16.65'%3e%3c/line%3e%3c/svg%3e");
-        background-repeat: no-repeat; background-position: 12px center; background-size: 18px;
-    }
+    .search-input { width: 100%; padding: 12px 20px 12px 40px; font-size: 15px; line-height: 1.2; border-radius: 24px; border: 1px solid #c8c6c4; font-family: Arial; transition: border-color 0.3s, box-shadow 0.3s; background-color: #f3f2f1; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3ccircle cx='11' cy='11' r='8'%3e%3c/circle%3e%3cline x1='21' y1='21' x2='16.65' y2='16.65'%3e%3c/line%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: 12px center; background-size: 18px; }
     .search-input:focus { outline: none; border-color: #005AFA; box-shadow: 0 0 0 3px rgba(0, 90, 250, 0.2); background-color: #fff; }
-
-    .search-dropdown {
-        position: absolute;
-        top: calc(100% + 8px);
-        left: 0;
-        width: 100%;
-        background: #fff;
-        border-radius: 12px;
-        box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-        border: 1px solid #e1dfdd;
-        max-height: 350px;
-        overflow-y: auto;
-        display: none;
-    }
+    .search-dropdown { position: absolute; top: calc(100% + 8px); left: 0; width: 100%; background: #fff; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.12); border: 1px solid #e1dfdd; max-height: 350px; overflow-y: auto; display: none; }
     .search-dropdown.active { display: block; }
-    
     .search-dropdown::-webkit-scrollbar { width: 6px; }
     .search-dropdown::-webkit-scrollbar-track { background: transparent; margin: 8px 0; }
     .search-dropdown::-webkit-scrollbar-thumb { background-color: #c8c6c4; border-radius: 10px; }
     .search-dropdown::-webkit-scrollbar-thumb:hover { background-color: #a19f9d; }
-
     .search-dropdown { scrollbar-width: thin; scrollbar-color: #c8c6c4 transparent; }
-    
     .search-result-item { display: flex; align-items: center; padding: 12px 15px; text-decoration: none; color: #333; border-bottom: 1px solid #f3f2f1; transition: background-color 0.2s; overflow: hidden; }
     .search-result-item:last-child { border-bottom: none; }
     .search-result-item:hover { background-color: #f3f2f1; }
-    
     .search-result-img { width: 40px; height: 40px; border-radius: 6px; object-fit: cover; margin-right: 12px; border: 1px solid #e1dfdd; flex-shrink: 0; }
-    
     .search-result-text-container { display: flex; align-items: center; overflow: hidden; flex: 1; }
     .search-result-title-text { font-size: 14px; font-weight: 400; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex-shrink: 1; }
     .search-result-level { color: #fd8723; font-size: 12px; font-weight: 500; margin-left: 8px; text-transform: capitalize; letter-spacing: 0.5px; flex-shrink: 0; white-space: nowrap; }
-
     .search-no-results { padding: 15px; text-align: center; color: #666; font-size: 14px; }
-
-    /* --- SECTION HEADINGS & FILTERS --- */
     .section { margin-bottom: 80px; }
     .section-header { border-bottom: 1px solid #c8c6c4; margin-bottom: 24px; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
     .section-title { font-size: 38px; font-weight: 400; color: #000; }
     .section-title span { color: #005AFA; }
-
     .inline-filter { font-family: 'Koerber', sans-serif; padding: 8px 30px 8px 15px; border-radius: 4px; border: 1px solid #c8c6c4; font-size: 14px; font-weight: 400; cursor: pointer; background-color: #f3f2f1; appearance: none; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 10px center; background-size: 1em; transition: background-color 0.2s, border-color 0.2s; }
     .inline-filter:hover { background-color: #e1dfdd; }
     .inline-filter:focus { outline: 2px solid #005AFA; border-color: transparent; }
-    
-    /* --- CARDS & GRIDS --- */
-    .card { 
-        border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #f3f2f1; cursor: pointer; text-decoration: none; width: 100%; padding: 0; border: none; 
-        transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease; 
-        box-shadow: 0 2px 8px rgba(0,0,0,0.05); 
-        transform: translateZ(0);
-        backface-visibility: hidden;
-        -webkit-font-smoothing: antialiased;
-    }
-    
-    .card img { 
-        width: 100%; height: 100%; object-fit: cover; display: block; 
-        transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); 
-        image-rendering: high-quality;
-        image-rendering: -webkit-optimize-contrast;
-        transform: translateZ(0);
-        backface-visibility: hidden;
-    }
+    .card { border-radius: 8px; position: relative; overflow: hidden; display: flex; flex-direction: column; background: #f3f2f1; cursor: pointer; text-decoration: none; width: 100%; padding: 0; border: none; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transform: translateZ(0); backface-visibility: hidden; -webkit-font-smoothing: antialiased; }
+    .card img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); image-rendering: high-quality; image-rendering: -webkit-optimize-contrast; transform: translateZ(0); backface-visibility: hidden; }
     .card:hover img { transform: scale(1.04); }
     .card:hover { transform: translateY(-6px); box-shadow: 0 14px 28px rgba(0,0,0,0.15); z-index: 10; }
-
-    /* --- SKELETON LOADER --- */
-    @keyframes shimmer {
-        0% { background-position: -1000px 0; }
-        100% { background-position: 1000px 0; }
-    }
-    .skeleton {
-        background: #f3f2f1;
-        background-image: linear-gradient(90deg, #f3f2f1 0px, #e1dfdd 50%, #f3f2f1 100%);
-        background-size: 1000px 100%;
-        animation: shimmer 2s infinite linear forwards;
-        cursor: default;
-        pointer-events: none;
-    }
+    @keyframes shimmer { 0% { background-position: -1000px 0; } 100% { background-position: 1000px 0; } }
+    .skeleton { background: #f3f2f1; background-image: linear-gradient(90deg, #f3f2f1 0px, #e1dfdd 50%, #f3f2f1 100%); background-size: 1000px 100%; animation: shimmer 2s infinite linear forwards; cursor: default; pointer-events: none; }
     .skeleton:hover { transform: none; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-
     .new-badge { position: absolute; top: 12px; right: 12px; background-color: rgba(253, 135, 35, 0.9); color: #fff; font-size: 12px; font-weight: 600; padding: 4px 10px; border-radius: 4px; z-index: 6; letter-spacing: 0.5px; box-shadow: 0 2px 6px rgba(227, 0, 15, 0.3); pointer-events: none; }
     .level-badge { position: absolute; bottom: 8%; left: 8%; background-color: #FFD100; color: #000; font-weight: 600; border-radius: 50px; z-index: 5; text-transform: capitalize; pointer-events: none; display: inline-flex; align-items: center; justify-content: center; line-height: 1.5; letter-spacing: 0.2px; }
     .large-grid .level-badge { font-size: 16px; padding: 7px 20px 5px 20px; }
     .small-grid .level-badge { font-size: 12px; padding: 5px 14px 3px 14px; }
-    
     .aspect-4-3 { aspect-ratio: 4 / 3; height: auto; }
     .aspect-1-1 { aspect-ratio: 1 / 1; height: auto; }
-
     .grid-altalanos-v2 { display: grid; grid-template-columns: 3.5fr 1fr; gap: 15px; }
     .guides-wrapper { display: flex; gap: 12px; width: 100%; height: 100%; }
     .guides-column { flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative; padding-bottom: 50px; padding-top: 15px; margin-top: -15px; }
-    .grid-content { flex: 1; display: flex; flex-direction: column; min-height: 0;}
-    
+    .grid-content { flex: 1; display: flex; flex-direction: column; min-height: 0; }
     .small-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 12px; flex: 1; height: 100%; }
     .large-grid { display: flex; flex: 1; height: 100%; }
-    
     .large-grid .card { height: 100%; width: 100%; }
     .small-grid .card { aspect-ratio: unset !important; height: 100%; }
-    
-    /* --- PAGINATION UI --- */
     .pagination-controls { position: absolute; bottom: 0; left: 0; width: 100%; height: 50px; display: none; align-items: center; justify-content: center; gap: 12px; opacity: 0; pointer-events: none; transform: translateY(10px); transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1); z-index: 20; }
     .pagination-controls.has-pages { display: flex; }
     .guides-column:hover .pagination-controls.has-pages { opacity: 1; pointer-events: auto; transform: translateY(0); }
-    
     .page-arrow { width: 32px; height: 32px; border-radius: 50%; border: 1px solid #c8c6c4; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #333; transition: background 0.2s, border-color 0.2s, color 0.2s; font-family: sans-serif; font-size: 14px; }
     .page-arrow:hover:not(:disabled) { border-color: #005AFA; color: #005AFA; }
     .page-arrow:disabled { opacity: 0.3; cursor: default; }
-    
     .page-dots { display: flex; gap: 6px; }
-    .page-dot { width: 6px; height: 6px; border-radius: 50%; background: #c8c6c4; transition: background 0.3s;}
+    .page-dot { width: 6px; height: 6px; border-radius: 50%; background: #c8c6c4; transition: background 0.3s; }
     .page-dot.active { background: #005AFA; }
-
-    /* --- USEFUL LINKS --- */
     .links-section { display: flex; flex-direction: column; }
     .links-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
-    
-    /* --- VIDEO PLACEHOLDER --- */
     .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
     .video-placeholder { background: transparent; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; border-radius: 8px; position: relative; }
+
+    /* --- PROMO TITLES SECTION --- */
+    .promo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
+    .promo-title { font-size: 28px; font-weight: 400; color: #000; margin-bottom: 16px; }
+    .promo-title span { color: #005AFA; }
+    .promo-placeholder { width: 100%; aspect-ratio: 16 / 9; }
 </style>
 </head>
 <body>
@@ -165,7 +92,22 @@
             </div>
         </div>
 
+        <!-- PROMO SECTION: Kalóriaszámolt heti étlap + Engedélyezett eszközök listája -->
         <div class="section animate-in delay-1">
+            <div class="promo-grid">
+                <div>
+                    <h2 class="promo-title">Kalóriaszámolt heti <span>étlap</span></h2>
+                    <div class="promo-placeholder"></div>
+                </div>
+                <div>
+                    <h2 class="promo-title">Engedélyezett eszközök <span>listája</span></h2>
+                    <div class="promo-placeholder"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- COPILOT: most 3.5fr 1fr grid (Hasznos linkek oldalsávval) -->
+        <div class="section animate-in delay-2">
             <div class="section-header">
                 <h2 class="section-title">Copilot <span>útmutatók</span></h2>
                 <select class="inline-filter" id="copilot-filter">
@@ -174,10 +116,8 @@
                     <option value="halado">Haladó</option>
                 </select>
             </div>
-            
-            <div class="grid-altalanos-v2" style="grid-template-columns: 1fr;"> 
+            <div class="grid-altalanos-v2">
                 <div class="guides-wrapper" id="copilot-wrapper">
-                    
                     <div class="guides-column guides-left">
                         <div class="grid-content large-grid" id="cop-large-content">
                             <div class="card skeleton aspect-4-3"></div>
@@ -188,7 +128,6 @@
                             <button class="page-arrow" id="cop-large-next">&gt;</button>
                         </div>
                     </div>
-                    
                     <div class="guides-column guides-right">
                         <div class="grid-content small-grid" id="cop-small-content">
                             <div class="card skeleton"></div>
@@ -202,12 +141,14 @@
                             <button class="page-arrow" id="cop-small-next">&gt;</button>
                         </div>
                     </div>
-                    
+                </div>
+                <div class="links-section">
+                    <div class="links-title">Hasznos linkek</div>
                 </div>
             </div>
         </div>
 
-        <div class="section animate-in delay-2">
+        <div class="section animate-in delay-3">
             <div class="section-header">
                 <h2 class="section-title">Videós <span>útmutatók</span></h2>
             </div>
@@ -217,7 +158,8 @@
             </div>
         </div>
 
-        <div class="section animate-in delay-3">
+        <!-- ÁLTALÁNOS: most 1fr (teljes szélesség, nincs oldalsáv) -->
+        <div class="section animate-in delay-4">
             <div class="section-header">
                 <h2 class="section-title">Általános <span>útmutatók</span></h2>
                 <select class="inline-filter" id="altalanos-filter">
@@ -226,10 +168,8 @@
                     <option value="halado">Haladó</option>
                 </select>
             </div>
-            
-            <div class="grid-altalanos-v2">
+            <div class="grid-altalanos-v2" style="grid-template-columns: 1fr;">
                 <div class="guides-wrapper" id="altalanos-wrapper">
-                    
                     <div class="guides-column guides-left">
                         <div class="grid-content large-grid" id="alt-large-content">
                             <div class="card skeleton aspect-1-1"></div>
@@ -240,7 +180,6 @@
                             <button class="page-arrow" id="alt-large-next">&gt;</button>
                         </div>
                     </div>
-                    
                     <div class="guides-column guides-right">
                         <div class="grid-content small-grid" id="alt-small-content">
                             <div class="card skeleton"></div>
@@ -254,11 +193,6 @@
                             <button class="page-arrow" id="alt-small-next">&gt;</button>
                         </div>
                     </div>
-                    
-                </div>
-
-                <div class="links-section">
-                    <div class="links-title">Hasznos linkek</div>
                 </div>
             </div>
         </div>
@@ -270,28 +204,19 @@
         window.scrollTo(0, 0);
 
         let siteData = null;
-        let currentSearchQuery = "";
-        
-        const state = {
-            altalanos: { largePage: 0, smallPage: 0 },
-            copilot: { largePage: 0, smallPage: 0 }
-        };
+        const state = { altalanos: { largePage: 0, smallPage: 0 }, copilot: { largePage: 0, smallPage: 0 } };
 
         fetch('data.json')
-            .then(response => response.json())
-            .then(data => {
-                siteData = data;
-                renderSection('altalanos', 'fade');
-                renderSection('copilot', 'fade');
-            })
-            .catch(error => console.error("Hiba a JSON betöltésekor:", error));
+            .then(r => r.json())
+            .then(data => { siteData = data; renderSection('altalanos', 'fade'); renderSection('copilot', 'fade'); })
+            .catch(e => console.error("Hiba a JSON betöltésekor:", e));
 
         function getAllCardsFlattened() {
             if (!siteData) return [];
             let all = [];
-            for (const category in siteData) {
-                if(siteData[category].largeCards) all = all.concat(siteData[category].largeCards);
-                if(siteData[category].smallCards) all = all.concat(siteData[category].smallCards);
+            for (const cat in siteData) {
+                if (siteData[cat].largeCards) all = all.concat(siteData[cat].largeCards);
+                if (siteData[cat].smallCards) all = all.concat(siteData[cat].smallCards);
             }
             return all;
         }
@@ -301,198 +226,102 @@
 
         searchInput.addEventListener('input', (e) => {
             const query = e.target.value.toLowerCase().trim();
-            
-            if (query === "") {
-                searchDropdown.classList.remove('active');
-                searchDropdown.innerHTML = '';
-            } else {
-                const allCards = getAllCardsFlattened();
-                const matchedCards = allCards.filter(c => c.title && c.title.toLowerCase().includes(query));
-                
-                if (matchedCards.length > 0) {
-                    searchDropdown.innerHTML = matchedCards.map(c => {
-                        let safeLink = c.link;
-                        if (safeLink !== '#' && !safeLink.startsWith('http') && !safeLink.startsWith('/')) {
-                            safeLink = 'https://' + safeLink;
-                        }
-                        const badgeText = c.level === 'kezdo' ? 'Kezdő' : 'Haladó';
-                        
-                        return `
-                            <a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="search-result-item">
-                                <img src="${c.img}" class="search-result-img" alt="borítókép">
-                                <div class="search-result-text-container">
-                                    <span class="search-result-title-text" title="${c.title}">${c.title}</span>
-                                    <span class="search-result-level">• ${badgeText}</span>
-                                </div>
-                            </a>
-                        `;
-                    }).join('');
-                } else {
-                    searchDropdown.innerHTML = `<div class="search-no-results">Nincs találat...</div>`;
-                }
-                searchDropdown.classList.add('active');
-            }
+            if (query === "") { searchDropdown.classList.remove('active'); searchDropdown.innerHTML = ''; return; }
+            const matched = getAllCardsFlattened().filter(c => c.title && c.title.toLowerCase().includes(query));
+            if (matched.length > 0) {
+                searchDropdown.innerHTML = matched.map(c => {
+                    let link = c.link;
+                    if (link !== '#' && !link.startsWith('http') && !link.startsWith('/')) link = 'https://' + link;
+                    return `<a href="${link}" target="_blank" rel="noopener noreferrer" class="search-result-item">
+                        <img src="${c.img}" class="search-result-img" alt="borítókép">
+                        <div class="search-result-text-container">
+                            <span class="search-result-title-text" title="${c.title}">${c.title}</span>
+                            <span class="search-result-level">• ${c.level === 'kezdo' ? 'Kezdő' : 'Haladó'}</span>
+                        </div></a>`;
+                }).join('');
+            } else { searchDropdown.innerHTML = `<div class="search-no-results">Nincs találat...</div>`; }
+            searchDropdown.classList.add('active');
         });
 
-        document.addEventListener('click', (e) => {
-            if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) {
-                searchDropdown.classList.remove('active');
-            }
-        });
-
-        searchInput.addEventListener('focus', (e) => {
-            if (e.target.value.trim() !== "") {
-                searchDropdown.classList.add('active');
-            }
-        });
+        document.addEventListener('click', (e) => { if (!searchInput.contains(e.target) && !searchDropdown.contains(e.target)) searchDropdown.classList.remove('active'); });
+        searchInput.addEventListener('focus', (e) => { if (e.target.value.trim() !== "") searchDropdown.classList.add('active'); });
 
         function renderSection(category, animType) {
             if (!siteData) return;
-            const data = siteData[category];
-            renderGrid(category, 'large', data.largeCards, 1, animType);
-            renderGrid(category, 'small', data.smallCards, 4, animType);
+            renderGrid(category, 'large', siteData[category].largeCards, 1, animType);
+            renderGrid(category, 'small', siteData[category].smallCards, 4, animType);
         }
 
         function renderGrid(category, sizeType, fullItemsArray, itemsPerPage, animType) {
             const totalPages = Math.max(1, Math.ceil(fullItemsArray.length / itemsPerPage));
-            
-            if (state[category][sizeType + 'Page'] >= totalPages) {
-                state[category][sizeType + 'Page'] = Math.max(0, totalPages - 1);
-            }
-            
+            if (state[category][sizeType + 'Page'] >= totalPages) state[category][sizeType + 'Page'] = Math.max(0, totalPages - 1);
             const currentPage = state[category][sizeType + 'Page'];
             const prefix = category === 'altalanos' ? 'alt' : 'cop';
             const contentDiv = document.getElementById(`${prefix}-${sizeType}-content`);
             const pagControls = document.getElementById(`${prefix}-${sizeType}-pagination`);
-            
             const pageItems = fullItemsArray.slice(currentPage * itemsPerPage, currentPage * itemsPerPage + itemsPerPage);
-            
             let aspectClass = (category === 'altalanos' && sizeType === 'large') ? 'aspect-1-1' : 'aspect-4-3';
-            if (sizeType === 'small') aspectClass = ''; 
-
+            if (sizeType === 'small') aspectClass = '';
             const htmlString = pageItems.map(c => {
-                let safeLink = c.link;
-                if (safeLink !== '#' && !safeLink.startsWith('http') && !safeLink.startsWith('/')) {
-                    safeLink = 'https://' + safeLink;
-                }
-                
-                const badgeText = c.level === 'kezdo' ? 'Kezdő' : 'Haladó';
-                const badgeHTML = `<div class="level-badge">${badgeText}</div>`;
-                const newBadgeHTML = c.isNew ? `<div class="new-badge">ÚJ</div>` : ``;
-
-                return `<a href="${safeLink}" target="_blank" rel="noopener noreferrer" class="card image-card ${aspectClass} filterable-card" data-level="${c.level}">
-                            ${newBadgeHTML}
-                            <img src="${c.img}">
-                            ${badgeHTML}
-                        </a>`;
+                let link = c.link;
+                if (link !== '#' && !link.startsWith('http') && !link.startsWith('/')) link = 'https://' + link;
+                return `<a href="${link}" target="_blank" rel="noopener noreferrer" class="card image-card ${aspectClass} filterable-card" data-level="${c.level}">
+                    ${c.isNew ? `<div class="new-badge">ÚJ</div>` : ''}
+                    <img src="${c.img}">
+                    <div class="level-badge">${c.level === 'kezdo' ? 'Kezdő' : 'Haladó'}</div></a>`;
             }).join('');
-
             contentDiv.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
-            if (animType === 'slide-left') {
-                contentDiv.style.transform = 'translateX(-40px)'; 
-            } else if (animType === 'slide-right') {
-                contentDiv.style.transform = 'translateX(40px)'; 
-            } else {
-                contentDiv.style.transform = 'translateX(0)';
-            }
+            contentDiv.style.transform = animType === 'slide-left' ? 'translateX(-40px)' : animType === 'slide-right' ? 'translateX(40px)' : 'translateX(0)';
             contentDiv.style.opacity = '0';
-            
             setTimeout(() => {
                 contentDiv.innerHTML = htmlString;
-                
                 if (totalPages > 1) {
-                    pagControls.classList.add('has-pages'); 
+                    pagControls.classList.add('has-pages');
                     document.getElementById(`${prefix}-${sizeType}-prev`).disabled = (currentPage === 0);
                     document.getElementById(`${prefix}-${sizeType}-next`).disabled = (currentPage === totalPages - 1);
-                    
                     const dotsContainer = document.getElementById(`${prefix}-${sizeType}-dots`);
                     dotsContainer.innerHTML = '';
-                    for (let i = 0; i < totalPages; i++) {
-                        dotsContainer.innerHTML += `<div class="page-dot ${i === currentPage ? 'active' : ''}"></div>`;
-                    }
-                } else {
-                    pagControls.classList.remove('has-pages'); 
-                }
-                
+                    for (let i = 0; i < totalPages; i++) dotsContainer.innerHTML += `<div class="page-dot ${i === currentPage ? 'active' : ''}"></div>`;
+                } else { pagControls.classList.remove('has-pages'); }
                 const filterVal = document.getElementById(`${category}-filter`).value;
-                const cards = contentDiv.querySelectorAll('.filterable-card');
-                cards.forEach(card => {
-                    card.style.transition = 'none'; 
-                    if (filterVal === 'all' || card.getAttribute('data-level') === filterVal) {
-                        card.style.visibility = 'visible';
-                        card.style.opacity = '1';
-                        card.style.pointerEvents = 'auto';
-                    } else {
-                        card.style.visibility = 'hidden';
-                        card.style.opacity = '0';
-                        card.style.pointerEvents = 'none';
-                    }
+                contentDiv.querySelectorAll('.filterable-card').forEach(card => {
+                    card.style.transition = 'none';
+                    const show = filterVal === 'all' || card.getAttribute('data-level') === filterVal;
+                    card.style.visibility = show ? 'visible' : 'hidden';
+                    card.style.opacity = show ? '1' : '0';
+                    card.style.pointerEvents = show ? 'auto' : 'none';
                 });
-                
                 contentDiv.style.transition = 'none';
-                if (animType === 'slide-left') {
-                    contentDiv.style.transform = 'translateX(40px)'; 
-                } else if (animType === 'slide-right') {
-                    contentDiv.style.transform = 'translateX(-40px)'; 
-                } else {
-                    contentDiv.style.transform = 'translateX(0)';
-                }
-                
-                void contentDiv.offsetWidth; 
-                
+                contentDiv.style.transform = animType === 'slide-left' ? 'translateX(40px)' : animType === 'slide-right' ? 'translateX(-40px)' : 'translateX(0)';
+                void contentDiv.offsetWidth;
                 contentDiv.style.transition = 'opacity 0.3s ease, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)';
                 contentDiv.style.opacity = '1';
                 contentDiv.style.transform = 'translateX(0)';
-                
-            }, 300); 
+            }, 300);
         }
 
         function applyVisibilityFilter(category) {
             const filterVal = document.getElementById(`${category}-filter`).value;
             const wrapper = document.getElementById(`${category}-wrapper`);
             if (!wrapper) return;
-            
-            const cards = wrapper.querySelectorAll('.filterable-card');
-            
-            cards.forEach(card => {
+            wrapper.querySelectorAll('.filterable-card').forEach(card => {
                 if (filterVal === 'all' || card.getAttribute('data-level') === filterVal) {
-                    card.style.transition = 'none';
-                    card.style.opacity = '0';
-                    card.style.visibility = 'visible';
-                    card.style.pointerEvents = 'auto';
-                    
-                    void card.offsetWidth; 
-                    
-                    card.style.transition = 'opacity 0.4s ease';
-                    card.style.opacity = '1';
-                    
+                    card.style.transition = 'none'; card.style.opacity = '0'; card.style.visibility = 'visible'; card.style.pointerEvents = 'auto';
+                    void card.offsetWidth;
+                    card.style.transition = 'opacity 0.4s ease'; card.style.opacity = '1';
                     setTimeout(() => { card.style.transition = ''; }, 450);
-
                 } else {
-                    card.style.transition = 'opacity 0.3s ease';
-                    card.style.opacity = '0';
-                    card.style.pointerEvents = 'none';
-                    
-                    setTimeout(() => {
-                        if (card.style.opacity === '0') card.style.visibility = 'hidden';
-                        card.style.transition = '';
-                    }, 350);
+                    card.style.transition = 'opacity 0.3s ease'; card.style.opacity = '0'; card.style.pointerEvents = 'none';
+                    setTimeout(() => { if (card.style.opacity === '0') card.style.visibility = 'hidden'; card.style.transition = ''; }, 350);
                 }
             });
         }
 
         function handleFilterChange(category) {
-            const oldLarge = state[category].largePage;
-            const oldSmall = state[category].smallPage;
-            
-            state[category].largePage = 0;
-            state[category].smallPage = 0;
-            
-            if (oldLarge === 0 && oldSmall === 0) {
-                applyVisibilityFilter(category);
-            } else {
-                renderSection(category, 'fade');
-            }
+            const oldLarge = state[category].largePage, oldSmall = state[category].smallPage;
+            state[category].largePage = 0; state[category].smallPage = 0;
+            if (oldLarge === 0 && oldSmall === 0) applyVisibilityFilter(category);
+            else renderSection(category, 'fade');
         }
 
         document.getElementById('altalanos-filter').addEventListener('change', () => handleFilterChange('altalanos'));
@@ -503,13 +332,10 @@
                 const itemsPerPage = sizeType === 'large' ? 1 : 4;
                 const fullItemsArray = siteData[category][sizeType + 'Cards'];
                 const maxPages = Math.ceil(fullItemsArray.length / itemsPerPage);
-                
                 if (direction === 'prev' && state[category][sizeType + 'Page'] > 0) {
-                    state[category][sizeType + 'Page']--;
-                    renderGrid(category, sizeType, fullItemsArray, itemsPerPage, 'slide-right');
+                    state[category][sizeType + 'Page']--; renderGrid(category, sizeType, fullItemsArray, itemsPerPage, 'slide-right');
                 } else if (direction === 'next' && state[category][sizeType + 'Page'] < maxPages - 1) {
-                    state[category][sizeType + 'Page']++;
-                    renderGrid(category, sizeType, fullItemsArray, itemsPerPage, 'slide-left');
+                    state[category][sizeType + 'Page']++; renderGrid(category, sizeType, fullItemsArray, itemsPerPage, 'slide-left');
                 }
             });
         }
@@ -518,12 +344,10 @@
         setupPagination('altalanos', 'large', 'alt-large-next', 'next');
         setupPagination('altalanos', 'small', 'alt-small-prev', 'prev');
         setupPagination('altalanos', 'small', 'alt-small-next', 'next');
-
         setupPagination('copilot', 'large', 'cop-large-prev', 'prev');
         setupPagination('copilot', 'large', 'cop-large-next', 'next');
         setupPagination('copilot', 'small', 'cop-small-prev', 'prev');
         setupPagination('copilot', 'small', 'cop-small-next', 'next');
-
     </script>
 </body>
 </html>
