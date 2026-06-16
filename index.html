@@ -300,28 +300,48 @@
             }, 300);
         }
 
-        function applyVisibilityFilter(category) {
-            const filterVal = document.getElementById(`${category}-filter`).value;
-            const wrapper = document.getElementById(`${category}-wrapper`);
-            if (!wrapper) return;
-            wrapper.querySelectorAll('.filterable-card').forEach(card => {
-                if (filterVal === 'all' || card.getAttribute('data-level') === filterVal) {
-                    card.style.transition = 'none'; card.style.opacity = '0'; card.style.visibility = 'visible'; card.style.pointerEvents = 'auto';
-                    void card.offsetWidth;
-                    card.style.transition = 'opacity 0.4s ease'; card.style.opacity = '1';
-                    setTimeout(() => { card.style.transition = ''; }, 450);
-                } else {
-                    card.style.transition = 'opacity 0.3s ease'; card.style.opacity = '0'; card.style.pointerEvents = 'none';
-                    setTimeout(() => { if (card.style.opacity === '0') card.style.visibility = 'hidden'; card.style.transition = ''; }, 350);
-                }
-            });
+        function findFirstPageWithMatch(fullItemsArray, itemsPerPage, filterVal) {
+            if (filterVal === 'all') return 0;
+            const totalPages = Math.max(1, Math.ceil(fullItemsArray.length / itemsPerPage));
+            for (let p = 0; p < totalPages; p++) {
+                const pageItems = fullItemsArray.slice(p * itemsPerPage, p * itemsPerPage + itemsPerPage);
+                if (pageItems.some(c => c.level === filterVal)) return p;
+            }
+            return 0; // fallback to first page if nothing matches
         }
 
         function handleFilterChange(category) {
-            const oldLarge = state[category].largePage, oldSmall = state[category].smallPage;
-            state[category].largePage = 0; state[category].smallPage = 0;
-            if (oldLarge === 0 && oldSmall === 0) applyVisibilityFilter(category);
-            else renderSection(category, 'fade');
+            const filterVal = document.getElementById(`${category}-filter`).value;
+            const largeCards = siteData[category].largeCards;
+            const smallCards = siteData[category].smallCards;
+
+            const bestLargePage = findFirstPageWithMatch(largeCards, 1, filterVal);
+            const bestSmallPage = findFirstPageWithMatch(smallCards, 4, filterVal);
+
+            const needsLargeRender = state[category].largePage !== bestLargePage;
+            const needsSmallRender = state[category].smallPage !== bestSmallPage;
+
+            state[category].largePage = bestLargePage;
+            state[category].smallPage = bestSmallPage;
+
+            if (needsLargeRender || needsSmallRender) {
+                renderSection(category, 'fade');
+            } else {
+                // already on the right page, just update visibility
+                const prefix = category === 'altalanos' ? 'alt' : 'cop';
+                ['large', 'small'].forEach(sizeType => {
+                    const contentDiv = document.getElementById(`${prefix}-${sizeType}-content`);
+                    contentDiv.querySelectorAll('.filterable-card').forEach(card => {
+                        const show = filterVal === 'all' || card.getAttribute('data-level') === filterVal;
+                        card.style.transition = 'none'; card.style.opacity = '0'; card.style.visibility = show ? 'visible' : 'hidden'; card.style.pointerEvents = show ? 'auto' : 'none';
+                        if (show) {
+                            void card.offsetWidth;
+                            card.style.transition = 'opacity 0.4s ease'; card.style.opacity = '1';
+                            setTimeout(() => { card.style.transition = ''; }, 450);
+                        }
+                    });
+                });
+            }
         }
 
         document.getElementById('altalanos-filter').addEventListener('change', () => handleFilterChange('altalanos'));
