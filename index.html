@@ -73,12 +73,11 @@
     .links-title { font-size: 18px; font-weight: 600; margin-bottom: 12px; }
     .video-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
     .video-placeholder { background: transparent; width: 100%; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; border-radius: 8px; position: relative; }
-
-    /* --- PROMO TITLES SECTION --- */
     .promo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; }
     .promo-title { font-size: 28px; font-weight: 400; color: #000; margin-bottom: 16px; }
     .promo-title span { color: #005AFA; }
     .promo-placeholder { width: 100%; aspect-ratio: 16 / 9; }
+    
 </style>
 </head>
 <body>
@@ -92,7 +91,6 @@
             </div>
         </div>
 
-        <!-- PROMO SECTION: Kalóriaszámolt heti étlap + Engedélyezett eszközök listája -->
         <div class="section animate-in delay-1">
             <div class="promo-grid">
                 <div>
@@ -100,13 +98,12 @@
                     <div class="promo-placeholder"></div>
                 </div>
                 <div>
-                    <h2 class="promo-title">Engedélyezett eszközök <span>listája</span></h2>
+                    <h2 class="promo-title">Engedélyezett AI eszközök <span>listája</span></h2>
                     <div class="promo-placeholder"></div>
                 </div>
             </div>
         </div>
 
-        <!-- ÁLTALÁNOS: 3.5fr 1fr grid (Hasznos linkek oldalsávval) -->
         <div class="section animate-in delay-2">
             <div class="section-header">
                 <h2 class="section-title">Általános <span>útmutatók</span></h2>
@@ -158,7 +155,6 @@
             </div>
         </div>
 
-        <!-- COPILOT: teljes szélesség, nincs oldalsáv -->
         <div class="section animate-in delay-4">
             <div class="section-header">
                 <h2 class="section-title">Copilot <span>útmutatók</span></h2>
@@ -327,7 +323,6 @@
             if (needsLargeRender || needsSmallRender) {
                 renderSection(category, 'fade');
             } else {
-                // already on the right page, just update visibility
                 const prefix = category === 'altalanos' ? 'alt' : 'cop';
                 ['large', 'small'].forEach(sizeType => {
                     const contentDiv = document.getElementById(`${prefix}-${sizeType}-content`);
