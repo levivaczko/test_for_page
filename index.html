@@ -271,15 +271,19 @@
             contentDiv.style.opacity = '0';
             setTimeout(() => {
                 contentDiv.innerHTML = htmlString;
-                if (totalPages > 1) {
+                const filterVal = document.getElementById(`${category}-filter`).value;
+                const validPages = getValidPages(fullItemsArray, itemsPerPage, filterVal);
+                let validIndex = validPages.indexOf(currentPage);
+                if (validIndex === -1) validIndex = 0;
+
+                if (validPages.length > 1) {
                     pagControls.classList.add('has-pages');
-                    document.getElementById(`${prefix}-${sizeType}-prev`).disabled = (currentPage === 0);
-                    document.getElementById(`${prefix}-${sizeType}-next`).disabled = (currentPage === totalPages - 1);
+                    document.getElementById(`${prefix}-${sizeType}-prev`).disabled = (validIndex <= 0);
+                    document.getElementById(`${prefix}-${sizeType}-next`).disabled = (validIndex === validPages.length - 1);
                     const dotsContainer = document.getElementById(`${prefix}-${sizeType}-dots`);
                     dotsContainer.innerHTML = '';
-                    for (let i = 0; i < totalPages; i++) dotsContainer.innerHTML += `<div class="page-dot ${i === currentPage ? 'active' : ''}"></div>`;
+                    for (let i = 0; i < validPages.length; i++) dotsContainer.innerHTML += `<div class="page-dot ${i === validIndex ? 'active' : ''}"></div>`;
                 } else { pagControls.classList.remove('has-pages'); }
-                const filterVal = document.getElementById(`${category}-filter`).value;
                 contentDiv.querySelectorAll('.filterable-card').forEach(card => {
                     card.style.transition = 'none';
                     const show = filterVal === 'all' || card.getAttribute('data-level') === filterVal;
@@ -294,6 +298,18 @@
                 contentDiv.style.opacity = '1';
                 contentDiv.style.transform = 'translateX(0)';
             }, 300);
+        }
+
+        // Visszaadja azoknak az oldalaknak az indexeit, amelyeken van a filternek megfelelő elem
+        function getValidPages(fullItemsArray, itemsPerPage, filterVal) {
+            const totalPages = Math.max(1, Math.ceil(fullItemsArray.length / itemsPerPage));
+            const valid = [];
+            for (let p = 0; p < totalPages; p++) {
+                if (filterVal === 'all') { valid.push(p); continue; }
+                const pageItems = fullItemsArray.slice(p * itemsPerPage, p * itemsPerPage + itemsPerPage);
+                if (pageItems.some(c => c.level === filterVal)) valid.push(p);
+            }
+            return valid.length ? valid : [0];
         }
 
         function findFirstPageWithMatch(fullItemsArray, itemsPerPage, filterVal) {
@@ -346,11 +362,17 @@
             document.getElementById(btnId).addEventListener('click', () => {
                 const itemsPerPage = sizeType === 'large' ? 1 : 4;
                 const fullItemsArray = siteData[category][sizeType + 'Cards'];
-                const maxPages = Math.ceil(fullItemsArray.length / itemsPerPage);
-                if (direction === 'prev' && state[category][sizeType + 'Page'] > 0) {
-                    state[category][sizeType + 'Page']--; renderGrid(category, sizeType, fullItemsArray, itemsPerPage, 'slide-right');
-                } else if (direction === 'next' && state[category][sizeType + 'Page'] < maxPages - 1) {
-                    state[category][sizeType + 'Page']++; renderGrid(category, sizeType, fullItemsArray, itemsPerPage, 'slide-left');
+                const filterVal = document.getElementById(`${category}-filter`).value;
+                const validPages = getValidPages(fullItemsArray, itemsPerPage, filterVal);
+                let validIndex = validPages.indexOf(state[category][sizeType + 'Page']);
+                if (validIndex === -1) validIndex = 0;
+
+                if (direction === 'prev' && validIndex > 0) {
+                    state[category][sizeType + 'Page'] = validPages[validIndex - 1];
+                    renderGrid(category, sizeType, fullItemsArray, itemsPerPage, 'slide-right');
+                } else if (direction === 'next' && validIndex < validPages.length - 1) {
+                    state[category][sizeType + 'Page'] = validPages[validIndex + 1];
+                    renderGrid(category, sizeType, fullItemsArray, itemsPerPage, 'slide-left');
                 }
             });
         }
