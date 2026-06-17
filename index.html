@@ -272,18 +272,7 @@
             setTimeout(() => {
                 contentDiv.innerHTML = htmlString;
                 const filterVal = document.getElementById(`${category}-filter`).value;
-                const validPages = getValidPages(fullItemsArray, itemsPerPage, filterVal);
-                let validIndex = validPages.indexOf(currentPage);
-                if (validIndex === -1) validIndex = 0;
-
-                if (validPages.length > 1) {
-                    pagControls.classList.add('has-pages');
-                    document.getElementById(`${prefix}-${sizeType}-prev`).disabled = (validIndex <= 0);
-                    document.getElementById(`${prefix}-${sizeType}-next`).disabled = (validIndex === validPages.length - 1);
-                    const dotsContainer = document.getElementById(`${prefix}-${sizeType}-dots`);
-                    dotsContainer.innerHTML = '';
-                    for (let i = 0; i < validPages.length; i++) dotsContainer.innerHTML += `<div class="page-dot ${i === validIndex ? 'active' : ''}"></div>`;
-                } else { pagControls.classList.remove('has-pages'); }
+                updatePaginationUI(category, sizeType);
                 contentDiv.querySelectorAll('.filterable-card').forEach(card => {
                     card.style.transition = 'none';
                     const show = filterVal === 'all' || card.getAttribute('data-level') === filterVal;
@@ -322,6 +311,27 @@
             return 0; // fallback to first page if nothing matches
         }
 
+        // A pöttyök és nyilak frissítése a jelenlegi filter + oldal alapján
+        function updatePaginationUI(category, sizeType) {
+            const itemsPerPage = sizeType === 'large' ? 1 : 4;
+            const fullItemsArray = siteData[category][sizeType + 'Cards'];
+            const filterVal = document.getElementById(`${category}-filter`).value;
+            const prefix = category === 'altalanos' ? 'alt' : 'cop';
+            const pagControls = document.getElementById(`${prefix}-${sizeType}-pagination`);
+            const validPages = getValidPages(fullItemsArray, itemsPerPage, filterVal);
+            let validIndex = validPages.indexOf(state[category][sizeType + 'Page']);
+            if (validIndex === -1) validIndex = 0;
+
+            if (validPages.length > 1) {
+                pagControls.classList.add('has-pages');
+                document.getElementById(`${prefix}-${sizeType}-prev`).disabled = (validIndex <= 0);
+                document.getElementById(`${prefix}-${sizeType}-next`).disabled = (validIndex === validPages.length - 1);
+                const dotsContainer = document.getElementById(`${prefix}-${sizeType}-dots`);
+                dotsContainer.innerHTML = '';
+                for (let i = 0; i < validPages.length; i++) dotsContainer.innerHTML += `<div class="page-dot ${i === validIndex ? 'active' : ''}"></div>`;
+            } else { pagControls.classList.remove('has-pages'); }
+        }
+
         function handleFilterChange(category) {
             const filterVal = document.getElementById(`${category}-filter`).value;
             const largeCards = siteData[category].largeCards;
@@ -341,6 +351,7 @@
             } else {
                 const prefix = category === 'altalanos' ? 'alt' : 'cop';
                 ['large', 'small'].forEach(sizeType => {
+                    updatePaginationUI(category, sizeType);
                     const contentDiv = document.getElementById(`${prefix}-${sizeType}-content`);
                     contentDiv.querySelectorAll('.filterable-card').forEach(card => {
                         const show = filterVal === 'all' || card.getAttribute('data-level') === filterVal;
