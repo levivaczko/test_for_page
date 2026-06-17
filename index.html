@@ -13,7 +13,7 @@
     @keyframes fadeInUp { 0% { opacity: 0; transform: translateY(30px); } 100% { opacity: 1; transform: translateY(0); } }
     .animate-in { opacity: 0; animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
     .delay-1 { animation-delay: 0.1s; } .delay-2 { animation-delay: 0.2s; } .delay-3 { animation-delay: 0.3s; } .delay-4 { animation-delay: 0.4s; }
-    .search-container { margin-bottom: 50px; position: relative; z-index: 100; display: block; }
+    .search-container { margin-bottom: 24px; position: relative; z-index: 100; display: block; }
     .search-wrapper { position: relative; width: 400px; max-width: 100%; margin-left: 0; }
     .search-input { width: 100%; padding: 12px 20px 12px 40px; font-size: 15px; line-height: 1.2; border-radius: 24px; border: 1px solid #c8c6c4; font-family: Arial; transition: border-color 0.3s, box-shadow 0.3s; background-color: #f3f2f1; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3ccircle cx='11' cy='11' r='8'%3e%3c/circle%3e%3cline x1='21' y1='21' x2='16.65' y2='16.65'%3e%3c/line%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: 12px center; background-size: 18px; }
     .search-input:focus { outline: none; border-color: #005AFA; box-shadow: 0 0 0 3px rgba(0, 90, 250, 0.2); background-color: #fff; }
@@ -84,13 +84,6 @@
 
     <div class="container">
 
-        <div class="search-container animate-in">
-            <div class="search-wrapper">
-                <input type="text" id="global-search" class="search-input" placeholder="Keresés az útmutatók között..." autocomplete="off">
-                <div id="search-dropdown" class="search-dropdown"></div>
-            </div>
-        </div>
-
         <div class="section animate-in delay-1">
             <div class="promo-grid">
                 <div>
@@ -101,6 +94,13 @@
                     <h2 class="promo-title">Engedélyezett AI eszközök <span>listája</span></h2>
                     <div class="promo-placeholder"></div>
                 </div>
+            </div>
+        </div>
+
+        <div class="search-container animate-in delay-2">
+            <div class="search-wrapper">
+                <input type="text" id="global-search" class="search-input" placeholder="Keresés az útmutatók között..." autocomplete="off">
+                <div id="search-dropdown" class="search-dropdown"></div>
             </div>
         </div>
 
