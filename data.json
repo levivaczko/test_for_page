@@ -5,28 +5,14 @@
                 "title": "Automatizált meeting monitorozás",
                 "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Automatiz%C3%A1lt-meeting-monitoroz%C3%A1s.aspx?csf=1&web=1&share=IQA1LRPLLEl9R4QkksKkyrPXASOIHn5VwBwCvARUAwp2Qyw&e=6cRve3",
                 "img": "img/automatizalt_meeting_monitorozas.jpg",
-                "level": "halado",
-                "isNew": true
-            },
-            {
-                "title": "Power Bi diagram",
-                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAJioTXhROFQZ8uyQ-Mx5tOAfVixZb_o_UrEu3ImZlJFLI",
-                "img": "img/csempe_1_1_kezdo_langdock.png",
                 "level": "kezdo",
-                "isNew": false
+                "isNew": true
             },
             {
                 "title": "Automatizált tömeges email küldés",
                 "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAlTYukroLrSL1GIAsVEj_tAacHwPue06aVXXAJtp4nsv8",
                 "img": "img/csempe_1_1_halado_automatizalt_tomeges_email_kuldes.png",
                 "level": "halado",
-                "isNew": false
-            },
-            {
-                "title": "AI cafeteria segédanyagok",
-                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDsK8VXHWhuTpjrGObO--MKAUnouYtXiRKCb_4DAxBy7HY",
-                "img": "img/ai_cafeteria_segedanyagok.jpg",
-                "level": "kezdo",
                 "isNew": false
             }
         ],
@@ -51,6 +37,20 @@
                 "img": "img/csempe_1_1_halado_gepkonyv_forditas.png",
                 "level": "halado",
                 "isNew": true
+            },
+            {
+                "title": "Power Bi diagram",
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAJioTXhROFQZ8uyQ-Mx5tOAfVixZb_o_UrEu3ImZlJFLI",
+                "img": "img/csempe_1_1_kezdo_langdock.png",
+                "level": "kezdo",
+                "isNew": false
+            },
+            {
+                "title": "AI cafeteria segédanyagok",
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDsK8VXHWhuTpjrGObO--MKAUnouYtXiRKCb_4DAxBy7HY",
+                "img": "img/ai_cafeteria_segedanyagok.jpg",
+                "level": "kezdo",
+                "isNew": false
             }
         ]
     },
