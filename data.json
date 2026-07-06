@@ -2,6 +2,13 @@
     "altalanos": {
         "largeCards": [
             {
+                "title": "Automatizált meeting monitorozás",
+                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Automatiz%C3%A1lt-meeting-monitoroz%C3%A1s.aspx?csf=1&web=1&share=IQA1LRPLLEl9R4QkksKkyrPXASOIHn5VwBwCvARUAwp2Qyw&e=6cRve3",
+                "img": "img/automatizalt_meeting_monitorozas.jpg",
+                "level": "kezdo",
+                "isNew": true
+            },
+            {
                 "title": "Power Bi diagram",
                 "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAJioTXhROFQZ8uyQ-Mx5tOAfVixZb_o_UrEu3ImZlJFLI",
                 "img": "img/csempe_1_1_kezdo_langdock.png",
