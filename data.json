@@ -2,6 +2,13 @@
     "altalanos": {
         "largeCards": [
             {
+                "title": "Hatékonyabb jegyzetelés személyes megbeszéléseken a OneNote Transcribe funkciójával",
+                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Hat%C3%A9konyabb-jegyzetel%C3%A9s-szem%C3%A9lyes-megbesz%C3%A9l%C3%A9seken-a-OneNote-Transcribe-funkci%C3%B3j%C3%A1val.aspx?d=w4bef96b829354a1bb472636e22779190&csf=1&web=1&e=66z5lA",
+                "img": "img/hatekonyabb_jegyzeteles.jpg",
+                "level": "kezdo",
+                "isNew": true
+            },
+            {
                 "title": "Automatizált meeting monitorozás",
                 "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Automatiz%C3%A1lt-meeting-monitoroz%C3%A1s.aspx?csf=1&web=1&share=IQA1LRPLLEl9R4QkksKkyrPXASOIHn5VwBwCvARUAwp2Qyw&e=6cRve3",
                 "img": "img/automatizalt_meeting_monitorozas.jpg",
@@ -14,13 +21,6 @@
                 "img": "img/csempe_1_1_halado_automatizalt_tomeges_email_kuldes.png",
                 "level": "halado",
                 "isNew": false
-            },
-            {
-                "title": "Hatékonyabb jegyzetelés személyes megbeszéléseken a OneNote Transcribe funkciójával",
-                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Hat%C3%A9konyabb-jegyzetel%C3%A9s-szem%C3%A9lyes-megbesz%C3%A9l%C3%A9seken-a-OneNote-Transcribe-funkci%C3%B3j%C3%A1val.aspx?d=w4bef96b829354a1bb472636e22779190&csf=1&web=1&e=66z5lA",
-                "img": "img/hatekonyabb_jegyzeteles.jpg",
-                "level": "kezdo",
-                "isNew": true
             }
         ],
         "smallCards": [
