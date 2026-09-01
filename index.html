@@ -129,7 +129,6 @@
                 <div class="kisokos-tile skeleton-tile"><span class="kisokos-thumb"></span><span class="kisokos-text"><span class="kisokos-title"></span><span class="kisokos-sub"></span></span></div>
                 <div class="kisokos-tile skeleton-tile"><span class="kisokos-thumb"></span><span class="kisokos-text"><span class="kisokos-title"></span><span class="kisokos-sub"></span></span></div>
                 <div class="kisokos-tile skeleton-tile"><span class="kisokos-thumb"></span><span class="kisokos-text"><span class="kisokos-title"></span><span class="kisokos-sub"></span></span></div>
-                <div class="kisokos-tile skeleton-tile"><span class="kisokos-thumb"></span><span class="kisokos-text"><span class="kisokos-title"></span><span class="kisokos-sub"></span></span></div>
             </div>
         </div>
 
@@ -245,7 +244,8 @@
 
         function renderKisokos() {
             const strip = document.getElementById('kisokos-strip');
-            const items = (siteData && siteData.kisokos) || [];
+            const MAX_TILES = 4;
+            const items = ((siteData && siteData.kisokos) || []).slice(0, MAX_TILES);
             if (!items.length) { strip.closest('.kisokos-band').style.display = 'none'; return; }
             strip.innerHTML = items.map(item => {
                 let link = item.link || '#';

@@ -105,32 +105,26 @@
     "kisokos": [
         {
             "img": "img/kisokos_prompt_alapok.jpg",
-            "title": "Prompt alapok",
-            "sub": "5 szabály a jó kérdéshez",
+            "title": "1",
+            "sub": "11",
             "link": "#"
         },
         {
             "img": "img/kisokos_adatkezeles.jpg",
-            "title": "Adatkezelés",
-            "sub": "Mit nem tölthetsz fel",
+            "title": "2",
+            "sub": "22",
             "link": "#"
         },
         {
             "img": "img/kisokos_gyorsbillentyuk.jpg",
-            "title": "Gyorsbillentyűk",
-            "sub": "Copilot parancsok",
+            "title": "3",
+            "sub": "33",
             "link": "#"
         },
         {
             "img": "img/kisokos_sablonok.jpg",
-            "title": "Sablonok",
-            "sub": "Kész promptok a munkához",
-            "link": "#"
-        },
-        {
-            "img": "img/kisokos_gyik.jpg",
-            "title": "GYIK",
-            "sub": "Gyakori kérdések",
+            "title": "4",
+            "sub": "44",
             "link": "#"
         }
     ]
