@@ -107,25 +107,25 @@
             "img": "img/kisokos_prompt_alapok.jpg",
             "title": "1",
             "sub": "11",
-            "link": "#"
+            "link": "https://google.com"
         },
         {
             "img": "img/kisokos_adatkezeles.jpg",
             "title": "2",
             "sub": "22",
-            "link": "#"
+            "link": "https://google.com"
         },
         {
             "img": "img/kisokos_gyorsbillentyuk.jpg",
             "title": "3",
             "sub": "33",
-            "link": "#"
+            "link": "https://google.com"
         },
         {
             "img": "img/kisokos_sablonok.jpg",
             "title": "4",
             "sub": "44",
-            "link": "#"
+            "link": "https://google.com"
         }
     ]
 }
