@@ -77,7 +77,30 @@
     .promo-title { font-size: 28px; font-weight: 400; color: #000; margin-bottom: 16px; }
     .promo-title span { color: #005AFA; }
     .promo-placeholder { width: 100%; aspect-ratio: 16 / 9; }
-    
+    /* --- Kisokos sáv --- */
+    .kisokos-band { background: #fd8723; border-radius: 12px; padding: 18px 20px 20px 20px; margin-bottom: 48px; box-shadow: 0 4px 16px rgba(253, 135, 35, 0.22); }
+    .kisokos-head { margin-bottom: 12px; }
+    .kisokos-label { font-size: 13px; font-weight: 600; letter-spacing: 1.2px; text-transform: uppercase; color: #fff; }
+    .kisokos-strip { display: flex; gap: 12px; overflow-x: auto; scrollbar-width: none; -ms-overflow-style: none; scroll-snap-type: x proximity; padding-bottom: 2px; }
+    .kisokos-strip::-webkit-scrollbar { display: none; }
+    .kisokos-tile { flex: 1 1 0; min-width: 225px; max-width: 320px; scroll-snap-align: start; display: flex; align-items: center; gap: 14px; padding: 14px 16px; background: #fff; border-radius: 8px; text-decoration: none; color: #333; box-shadow: 0 2px 6px rgba(0,0,0,0.10); transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.5s cubic-bezier(0.16, 1, 0.3, 1); }
+    .kisokos-tile:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.22); }
+    .kisokos-tile:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+    .kisokos-thumb { flex-shrink: 0; width: 60px; height: 60px; border-radius: 8px; overflow: hidden; background: #f3f2f1; }
+    .kisokos-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+    .kisokos-tile:hover .kisokos-thumb img { transform: scale(1.06); }
+    .kisokos-tile.skeleton-tile { pointer-events: none; }
+    .kisokos-tile.skeleton-tile:hover { transform: none; box-shadow: 0 2px 6px rgba(0,0,0,0.10); }
+    .kisokos-tile.skeleton-tile .kisokos-thumb, .kisokos-tile.skeleton-tile .kisokos-title, .kisokos-tile.skeleton-tile .kisokos-sub { background: #f3f2f1; background-image: linear-gradient(90deg, #f3f2f1 0px, #e1dfdd 50%, #f3f2f1 100%); background-size: 1000px 100%; animation: shimmer 2s infinite linear forwards; border-radius: 4px; color: transparent; }
+    .kisokos-tile.skeleton-tile .kisokos-title { width: 65%; height: 15px; margin-bottom: 7px; }
+    .kisokos-tile.skeleton-tile .kisokos-sub { width: 90%; height: 12px; }
+    .kisokos-new { flex-shrink: 0; margin-left: auto; width: 8px; height: 8px; border-radius: 50%; background: #E3000F; }
+    .kisokos-text { display: block; flex: 1 1 auto; min-width: 0; overflow: hidden; }
+    .kisokos-title { display: block; font-size: 15px; font-weight: 600; line-height: 1.3; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; transition: color 0.2s; }
+    .kisokos-tile:hover .kisokos-title { color: #fd8723; }
+    .kisokos-sub { display: block; font-size: 13px; color: #666; line-height: 1.35; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    @media (max-width: 900px) { .kisokos-band { padding: 16px; } .kisokos-tile { flex: 0 0 auto; min-width: 210px; max-width: none; } }
+
 </style>
 </head>
 <body>
@@ -94,6 +117,19 @@
                     <h2 class="promo-title">Engedélyezett AI eszközök <span>listája</span></h2>
                     <div class="promo-placeholder"></div>
                 </div>
+            </div>
+        </div>
+
+        <div class="section kisokos-band animate-in delay-2">
+            <div class="kisokos-head">
+                <div class="kisokos-label">AI Kisokos</div>
+            </div>
+            <div class="kisokos-strip" id="kisokos-strip">
+                <div class="kisokos-tile skeleton-tile"><span class="kisokos-thumb"></span><span class="kisokos-text"><span class="kisokos-title"></span><span class="kisokos-sub"></span></span></div>
+                <div class="kisokos-tile skeleton-tile"><span class="kisokos-thumb"></span><span class="kisokos-text"><span class="kisokos-title"></span><span class="kisokos-sub"></span></span></div>
+                <div class="kisokos-tile skeleton-tile"><span class="kisokos-thumb"></span><span class="kisokos-text"><span class="kisokos-title"></span><span class="kisokos-sub"></span></span></div>
+                <div class="kisokos-tile skeleton-tile"><span class="kisokos-thumb"></span><span class="kisokos-text"><span class="kisokos-title"></span><span class="kisokos-sub"></span></span></div>
+                <div class="kisokos-tile skeleton-tile"><span class="kisokos-thumb"></span><span class="kisokos-text"><span class="kisokos-title"></span><span class="kisokos-sub"></span></span></div>
             </div>
         </div>
 
@@ -204,8 +240,27 @@
 
         fetch('data.json')
             .then(r => r.json())
-            .then(data => { siteData = data; renderSection('altalanos', 'fade'); renderSection('copilot', 'fade'); })
+            .then(data => { siteData = data; renderKisokos(); renderSection('altalanos', 'fade'); renderSection('copilot', 'fade'); })
             .catch(e => console.error("Hiba a JSON betöltésekor:", e));
+
+        function renderKisokos() {
+            const strip = document.getElementById('kisokos-strip');
+            const items = (siteData && siteData.kisokos) || [];
+            if (!items.length) { strip.closest('.kisokos-band').style.display = 'none'; return; }
+            strip.innerHTML = items.map(item => {
+                let link = item.link || '#';
+                if (link !== '#' && !link.startsWith('http') && !link.startsWith('/')) link = 'https://' + link;
+                const target = link === '#' ? '' : ' target="_blank" rel="noopener noreferrer"';
+                return `<a class="kisokos-tile" href="${link}"${target}>
+                    <span class="kisokos-thumb"><img src="${item.img}" alt="" loading="lazy" onerror="this.style.display='none'"></span>
+                    <span class="kisokos-text">
+                        <span class="kisokos-title" title="${item.title || ''}">${item.title || ''}</span>
+                        ${item.sub ? `<span class="kisokos-sub">${item.sub}</span>` : ''}
+                    </span>
+                    ${item.isNew ? '<span class="kisokos-new"></span>' : ''}
+                </a>`;
+            }).join('');
+        }
 
         function getAllCardsFlattened() {
             if (!siteData) return [];

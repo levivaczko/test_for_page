@@ -101,5 +101,37 @@
                 "title": "Adatgyûjtés weboldalról"
             }
         ]
-    }
+    },
+    "kisokos": [
+        {
+            "img": "img/kisokos_prompt_alapok.jpg",
+            "title": "Prompt alapok",
+            "sub": "5 szabály a jó kérdéshez",
+            "link": "#"
+        },
+        {
+            "img": "img/kisokos_adatkezeles.jpg",
+            "title": "Adatkezelés",
+            "sub": "Mit nem tölthetsz fel",
+            "link": "#"
+        },
+        {
+            "img": "img/kisokos_gyorsbillentyuk.jpg",
+            "title": "Gyorsbillentyűk",
+            "sub": "Copilot parancsok",
+            "link": "#"
+        },
+        {
+            "img": "img/kisokos_sablonok.jpg",
+            "title": "Sablonok",
+            "sub": "Kész promptok a munkához",
+            "link": "#"
+        },
+        {
+            "img": "img/kisokos_gyik.jpg",
+            "title": "GYIK",
+            "sub": "Gyakori kérdések",
+            "link": "#"
+        }
+    ]
 }
