@@ -92,13 +92,6 @@
                 "level": "kezdo",
                 "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDNObMTaCIdRILx5ZQCgpvMAS6QpBdsGR1lrRmoMw8xibQ",
                 "title": "Adatgyûjtés weboldalról"
-            },
-            {
-                "img": "img/csempe_4_3_v2_adatgyujtes_weboldalrol.png",
-                "isNew": false,
-                "level": "kezdo",
-                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDNObMTaCIdRILx5ZQCgpvMAS6QpBdsGR1lrRmoMw8xibQ",
-                "title": "Adatgyûjtés weboldalról"
             }
         ]
     },
@@ -110,9 +103,9 @@
             "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/%C3%9Aj-AI-jel%C3%B6l%C3%A9si-k%C3%B6telezetts%C3%A9g-2026.-augusztus-2-t%C3%B3l.aspx?d=w62414f5942ed47438c87f8a17465e664&csf=1&web=2&share=IQBZT0Fi7UJDR4yH-KF0ZeZkAdWVkSpwuWQVlU-SZppFe2U&e=jgJ7w5"
         },
         {
-            "img": "img/kisokos_adatkezeles.jpg",
-            "title": "2",
-            "sub": "22",
+            "img": "img/help.png",
+            "title": "Promptolás alapjai",
+            "sub": "Útmutató",
             "link": "https://google.com"
         },
         {
