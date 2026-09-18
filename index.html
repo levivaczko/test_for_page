@@ -260,6 +260,7 @@
         /* ---------- Kisokos: élő vonal (boil) ---------- */
         const BOIL_ALWAYS = true;   // false = a sáv kerete csak hoverre remeg
         const BOIL_MS = 125;        // képkocka-váltás ideje
+        const INK_OUT = 4;          // mennyire lógjon ki a keret a sávból (px)
         let boilTimer = null;
 
         function inkRng(seed) {
@@ -284,9 +285,10 @@
             return d;
         }
 
-        function roughRect(w, h, r, seed, amp) {
+        function roughRect(w, h, r, seed, amp, out) {
+            out = out || 0;
             const rand = inkRng(seed), pts = [];
-            const x0 = 1.5, y0 = 1.5, x1 = w - 1.5, y1 = h - 1.5;
+            const x0 = 1.5 - out, y0 = 1.5 - out, x1 = w - 1.5 + out, y1 = h - 1.5 + out;
             const push = (x, y) => pts.push([x + (rand() * 2 - 1) * amp, y + (rand() * 2 - 1) * amp]);
             const arc = (cx, cy, from, to) => {
                 for (let i = 0; i <= 3; i++) {
@@ -325,9 +327,9 @@
             svg.appendChild(path);
 
             const frames = [
-                roughRect(w, h, 12, 11, 2.2),
-                roughRect(w, h, 12, 22, 2.2),
-                roughRect(w, h, 12, 33, 2.2)
+                roughRect(w, h, 12 + INK_OUT, 11, 2.4, INK_OUT),
+                roughRect(w, h, 12 + INK_OUT, 22, 2.4, INK_OUT),
+                roughRect(w, h, 12 + INK_OUT, 33, 2.4, INK_OUT)
             ];
             path.setAttribute('d', frames[0]);
 
