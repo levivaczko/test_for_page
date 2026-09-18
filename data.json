@@ -100,25 +100,29 @@
             "img": "img/clipboard-text.png",
             "title": "AI jelölési kötelezettség",
             "sub": "Új szabályzat",
-            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/%C3%9Aj-AI-jel%C3%B6l%C3%A9si-k%C3%B6telezetts%C3%A9g-2026.-augusztus-2-t%C3%B3l.aspx?d=w62414f5942ed47438c87f8a17465e664&csf=1&web=2&share=IQBZT0Fi7UJDR4yH-KF0ZeZkAdWVkSpwuWQVlU-SZppFe2U&e=jgJ7w5"
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/%C3%9Aj-AI-jel%C3%B6l%C3%A9si-k%C3%B6telezetts%C3%A9g-2026.-augusztus-2-t%C3%B3l.aspx?d=w62414f5942ed47438c87f8a17465e664&csf=1&web=2&share=IQBZT0Fi7UJDR4yH-KF0ZeZkAdWVkSpwuWQVlU-SZppFe2U&e=jgJ7w5",
+            "mark": true
         },
         {
             "img": "img/help.png",
             "title": "Promptolás alapjai",
             "sub": "Útmutató",
-            "link": "https://google.com"
+            "link": "https://google.com",
+            "mark": false
         },
         {
             "img": "img/kisokos_gyorsbillentyuk.jpg",
             "title": "3",
             "sub": "33",
-            "link": "https://google.com"
+            "link": "https://google.com",
+            "mark": false,
         },
         {
             "img": "img/kisokos_sablonok.jpg",
             "title": "4",
             "sub": "44",
-            "link": "https://google.com"
+            "link": "https://google.com",
+            "mark": false
         }
     ]
 }
