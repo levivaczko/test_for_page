@@ -101,6 +101,9 @@
     .kisokos-tile:hover .kisokos-title { color: #fd8723; }
     .kisokos-mark { background-image: linear-gradient(rgba(253, 135, 35, 0.25), rgba(253, 135, 35, 0.25)); background-repeat: no-repeat; background-position: 0 0; background-size: 0% 100%; border-radius: 2px 7px 3px 8px; padding: 1px 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; transition: background-size 0.45s cubic-bezier(0.65, 0, 0.35, 1); }
     .kisokos-tile:hover .kisokos-mark { background-size: 100% 100%; }
+    .kisokos-alert { position: absolute; top: 7px; right: 9px; width: 17px; height: 21px; pointer-events: none; transform: rotate(-6deg); }
+    .kisokos-alert path { fill: none; stroke: #FFD100; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
+    .kisokos-tile:hover .kisokos-alert { transform: rotate(-6deg) scale(1.12); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
     @media (prefers-reduced-motion: reduce) { .kisokos-mark { transition: none; } }
     .kisokos-sub { display: block; font-size: 13px; color: #666; line-height: 1.35; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     /* --- Kisokos: élő vonal --- */
@@ -359,6 +362,11 @@
             inkResizeTimer = setTimeout(initKisokosInk, 200);
         });
 
+        const KISOKOS_ALERT = '<svg class="kisokos-alert" viewBox="0 0 17 21" aria-hidden="true">'
+            + '<path d="M9.3 2.6 C 8.7 5.9, 8.3 9.4, 8.0 12.7"/>'
+            + '<path d="M7.7 17.9 C 7.9 17.8, 8.1 17.9, 8.0 18.1"/>'
+            + '</svg>';
+
         function renderKisokos() {
             const strip = document.getElementById('kisokos-strip');
             const MAX_TILES = 4;
@@ -375,6 +383,7 @@
                         ${item.sub ? `<span class="kisokos-sub">${item.sub}</span>` : ''}
                     </span>
                     ${item.isNew ? '<span class="kisokos-new"></span>' : ''}
+                    ${item.mark ? KISOKOS_ALERT : ''}
                 </a>`;
             }).join('');
             requestAnimationFrame(initKisokosInk);
