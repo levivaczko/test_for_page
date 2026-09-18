@@ -108,9 +108,6 @@
     .kisokos-ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; }
     .kisokos-ink path { fill: none; stroke: #FFD100; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; opacity: 1; }
     .kisokos-tile { position: relative; }
-    .kisokos-tile-ink { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; overflow: visible; opacity: 0; transition: opacity 0.18s; }
-    .kisokos-tile-ink path { fill: none; stroke: #fd8723; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-    .kisokos-tile:hover .kisokos-tile-ink { opacity: 1; }
     .kisokos-tile:hover { transform: translateY(-4px) rotate(-0.35deg); }
     @media (prefers-reduced-motion: reduce) { .kisokos-tile:hover { transform: translateY(-4px); } }
     @media (max-width: 900px) { .kisokos-band { padding: 16px; } .kisokos-tile { flex: 0 0 auto; min-width: 210px; max-width: none; } }
@@ -354,16 +351,6 @@
                 }
             }
 
-            band.querySelectorAll('.kisokos-tile').forEach((tile, i) => {
-                const old = tile.querySelector('.kisokos-tile-ink');
-                if (old) old.remove();
-                const ts = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                ts.setAttribute('class', 'kisokos-tile-ink');
-                ts.setAttribute('preserveAspectRatio', 'none');
-                ts.setAttribute('viewBox', '0 0 ' + tile.offsetWidth + ' ' + tile.offsetHeight);
-                ts.appendChild(inkPath(roughRect(tile.offsetWidth, tile.offsetHeight, 8, 400 + i * 17, 1.8)));
-                tile.appendChild(ts);
-            });
         }
 
         let inkResizeTimer;
