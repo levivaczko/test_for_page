@@ -261,6 +261,7 @@
         const BOIL_ALWAYS = true;   // false = a sáv kerete csak hoverre remeg
         const BOIL_MS = 125;        // képkocka-váltás ideje
         const INK_OUT = 4;          // mennyire lógjon ki a keret a sávból (px)
+        const BOIL_FRAMES = 8;      // hány különböző körberajzolás közül válogasson
         let boilTimer = null;
 
         function inkRng(seed) {
@@ -326,11 +327,10 @@
             const path = inkPath('');
             svg.appendChild(path);
 
-            const frames = [
-                roughRect(w, h, 12 + INK_OUT, 11, 2.4, INK_OUT),
-                roughRect(w, h, 12 + INK_OUT, 22, 2.4, INK_OUT),
-                roughRect(w, h, 12 + INK_OUT, 33, 2.4, INK_OUT)
-            ];
+            const frames = [];
+            for (let f = 0; f < BOIL_FRAMES; f++) {
+                frames.push(roughRect(w, h, 12 + INK_OUT, 11 + f * 37, 2.4, INK_OUT));
+            }
             path.setAttribute('d', frames[0]);
 
             clearInterval(boilTimer);
@@ -338,7 +338,10 @@
             const start = () => {
                 clearInterval(boilTimer);
                 boilTimer = setInterval(() => {
-                    idx = (idx + 1) % frames.length;
+                    // véletlen következő képkocka, de sosem ugyanaz kétszer egymás után
+                    let next = idx;
+                    while (next === idx) next = Math.floor(Math.random() * frames.length);
+                    idx = next;
                     path.setAttribute('d', frames[idx]);
                 }, BOIL_MS);
             };
@@ -463,6 +466,8 @@
                     card.style.visibility = show ? 'visible' : 'hidden';
                     card.style.opacity = show ? '1' : '0';
                     card.style.pointerEvents = show ? 'auto' : 'none';
+                    // a következő képkockán visszaadjuk a CSS-ben definiált lassú hover-animációt
+                    requestAnimationFrame(() => { card.style.transition = ''; });
                 });
                 contentDiv.style.transition = 'none';
                 contentDiv.style.transform = animType === 'slide-left' ? 'translateX(40px)' : animType === 'slide-right' ? 'translateX(-40px)' : 'translateX(0)';
@@ -544,6 +549,8 @@
                             void card.offsetWidth;
                             card.style.transition = 'opacity 0.4s ease'; card.style.opacity = '1';
                             setTimeout(() => { card.style.transition = ''; }, 450);
+                        } else {
+                            requestAnimationFrame(() => { card.style.transition = ''; });
                         }
                     });
                 });
