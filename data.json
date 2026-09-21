@@ -2,96 +2,103 @@
     "altalanos": {
         "largeCards": [
             {
-                "img": "img/hatekonyabb_jegyzeteles.jpg",
-                "isNew": true,
-                "level": "kezdo",
+                "title": "Hatékonyabb jegyzetelés személyes megbeszéléseken a OneNote Transcribe funkciójával",
                 "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Hat%C3%A9konyabb-jegyzetel%C3%A9s-szem%C3%A9lyes-megbesz%C3%A9l%C3%A9seken-a-OneNote-Transcribe-funkci%C3%B3j%C3%A1val.aspx?d=w4bef96b829354a1bb472636e22779190&csf=1&web=1&e=66z5lA",
-                "title": "Hatékonyabb jegyzetelés személyes megbeszéléseken a OneNote Transcribe funkciójával"
-            },
-            {
-                "img": "img/automatizalt_meeting_monitorozas.jpg",
-                "isNew": true,
+                "img": "img/hatekonyabb_jegyzeteles.jpg",
                 "level": "kezdo",
-                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Automatiz%C3%A1lt-meeting-monitoroz%C3%A1s.aspx?csf=1&web=1&share=IQA1LRPLLEl9R4QkksKkyrPXASOIHn5VwBwCvARUAwp2Qyw&e=6cRve3",
-                "title": "Automatizált meeting monitorozás"
+                "isNew": true
             },
             {
-                "img": "img/csempe_1_1_halado_automatizalt_tomeges_email_kuldes.png",
-                "isNew": false,
-                "level": "halado",
+                "title": "Automatizált meeting monitorozás",
+                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Automatiz%C3%A1lt-meeting-monitoroz%C3%A1s.aspx?csf=1&web=1&share=IQA1LRPLLEl9R4QkksKkyrPXASOIHn5VwBwCvARUAwp2Qyw&e=6cRve3",
+                "img": "img/automatizalt_meeting_monitorozas.jpg",
+                "level": "kezdo",
+                "isNew": true
+            },
+            {
+                "title": "Automatizált tömeges email küldés",
                 "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAlTYukroLrSL1GIAsVEj_tAacHwPue06aVXXAJtp4nsv8",
-                "title": "Automatizált tömeges email küldés"
+                "img": "img/csempe_1_1_halado_automatizalt_tomeges_email_kuldes.png",
+                "level": "halado",
+                "isNew": false
             }
         ],
         "smallCards": [
             {
-                "img": "img/csempe_1_1_kezdo_langdock.png",
-                "isNew": false,
-                "level": "kezdo",
-                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAJioTXhROFQZ8uyQ-Mx5tOAfVixZb_o_UrEu3ImZlJFLI",
-                "title": "Power Bi diagram"
-            },
-            {
-                "img": "img/csempe_1_1_halado_mermaid_diagram_generalas.png",
-                "isNew": false,
-                "level": "halado",
+                "title": "Mermaid diagram generálás",
                 "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAKK8C6ZwRxQ5GPpk53AR-0ARkkh6U2yMsS0tOvB_yQfpc",
-                "title": "Mermaid diagram generálás"
+                "img": "img/csempe_1_1_halado_mermaid_diagram_generalas.png",
+                "level": "halado",
+                "isNew": false
             },
             {
-                "img": "img/csempe_1_1_halado_shopfloor_layout_felulet_fejlesztes.png",
-                "isNew": false,
-                "level": "halado",
+                "title": "Shopfloor layout felület fejlesztés",
                 "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQA0Ho-5OzinT42TFt4cT6iWASARVRs0-f33dpd06ra7zSg",
-                "title": "Shopfloor layout felület fejlesztés"
-            },
-            {
-                "img": "img/csempe_1_1_halado_gepkonyv_forditas.png",
-                "isNew": true,
+                "img": "img/csempe_1_1_halado_shopfloor_layout_felulet_fejlesztes.png",
                 "level": "halado",
-                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDMP1rgeW-_TLQBgtozj8kjAbD5f_H4xoXhX7J4MpTO_Zw",
-                "title": "Gepkonyv forditas"
+                "isNew": false
             },
             {
-                "img": "img/ai_cafeteria_segedanyagok.jpg",
-                "isNew": false,
+                "title": "Gepkonyv forditas",
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDMP1rgeW-_TLQBgtozj8kjAbD5f_H4xoXhX7J4MpTO_Zw",
+                "img": "img/csempe_1_1_halado_gepkonyv_forditas.png",
+                "level": "halado",
+                "isNew": true
+            },
+            {
+                "title": "Power Bi diagram",
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAJioTXhROFQZ8uyQ-Mx5tOAfVixZb_o_UrEu3ImZlJFLI",
+                "img": "img/csempe_1_1_kezdo_langdock.png",
                 "level": "kezdo",
+                "isNew": false
+            },
+            {
+                "title": "AI cafeteria segédanyagok",
                 "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDsK8VXHWhuTpjrGObO--MKAUnouYtXiRKCb_4DAxBy7HY",
-                "title": "AI cafeteria segédanyagok"
+                "img": "img/ai_cafeteria_segedanyagok.jpg",
+                "level": "kezdo",
+                "isNew": false
             }
         ]
     },
     "copilot": {
         "largeCards": [
             {
-                "img": "img/megint új prezi készítés.jpg",
-                "isNew": true,
+                "title": "Copilot Chat használata",
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQBYNcZpWYyYR7mSdizgOYUOAXjoY-t4a3z2RQvp4f5a0Ec",
+                "img": "img/csempe_4_3_v2_copilot_chat_hasznalata.png",
                 "level": "kezdo",
-                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Hogyan-k%C3%A9sz%C3%ADts%C3%BCnk-professzion%C3%A1lis-PDF-eket-%C3%A9s-prezent%C3%A1ci%C3%B3kat-a-Copilot-seg%C3%ADts%C3%A9g%C3%A9vel-.aspx?d=w36f04636ec874c7aa8439b1bbc754dab&csf=1&web=1&e=R2yBoI",
-                "title": "Professzionális dokumentumok és prezentációk készítése Copilot segítségével"
+                "isNew": true
             },
             {
-                "img": "img/csempe_4_3_v2_copilot_chat_hasznalata.png",
-                "isNew": true,
+                "title": "Professzionális dokumentumok és prezentációk készítése Copilot segítségével",
+                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Hogyan-k%C3%A9sz%C3%ADts%C3%BCnk-professzion%C3%A1lis-PDF-eket-%C3%A9s-prezent%C3%A1ci%C3%B3kat-a-Copilot-seg%C3%ADts%C3%A9g%C3%A9vel-.aspx?d=w36f04636ec874c7aa8439b1bbc754dab&csf=1&web=1&e=R2yBoI",
+                "img": "img/megint új prezi készítés.jpg",
                 "level": "kezdo",
-                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQBYNcZpWYyYR7mSdizgOYUOAXjoY-t4a3z2RQvp4f5a0Ec",
-                "title": "Copilot Chat használata"
+                "isNew": true
             }
         ],
         "smallCards": [
             {
-                "img": "img/csempe_4_3_v1.png",
-                "isNew": false,
-                "level": "kezdo",
+                "title": "Email vázlat készítés",
                 "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAgLkHyMBRbRIYFFNCPo7uUAaBGkWGIVbxN7lgkL7yhgZ8",
-                "title": "Email vázlat készítés"
+                "img": "img/csempe_4_3_v1.png",
+                "level": "kezdo",
+                "isNew": false
             },
             {
-                "img": "img/csempe_4_3_v2_adatgyujtes_weboldalrol.png",
-                "isNew": false,
-                "level": "kezdo",
+                "title": "Adatgyûjtés weboldalról",
                 "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDNObMTaCIdRILx5ZQCgpvMAS6QpBdsGR1lrRmoMw8xibQ",
-                "title": "Adatgyûjtés weboldalról"
+                "img": "img/csempe_4_3_v2_adatgyujtes_weboldalrol.png",
+                "level": "kezdo",
+                "isNew": false
+            },
+            {
+                "title": "Így ellenőrizheted a Copilot-licencedet",
+                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/%C3%8Dgy-ellen%C5%91rizheted-a-Copilot-licencedet.aspx?d=wf577bf7a106e431d8a87fa45bb6ec8f8&csf=1&web=1&e=sArkWE",
+                "img": "img/Copilot licenc.jpg",
+                "level": "kezdo",
+                "isNew": true
             }
         ]
     },
