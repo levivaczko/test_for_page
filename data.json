@@ -92,13 +92,6 @@
                 "img": "img/csempe_4_3_v2_adatgyujtes_weboldalrol.png",
                 "level": "kezdo",
                 "isNew": false
-            },
-            {
-                "title": "Így ellenőrizheted a Copilot-licencedet",
-                "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/%C3%8Dgy-ellen%C5%91rizheted-a-Copilot-licencedet.aspx?d=wf577bf7a106e431d8a87fa45bb6ec8f8&csf=1&web=1&e=sArkWE",
-                "img": "img/így_ellenorizheted_a_copilot_licenced.jpg",
-                "level": "kezdo",
-                "isNew": true
             }
         ]
     },
@@ -111,7 +104,7 @@
             "mark": true
         },
         {
-            "img": "img/help.png",
+            "img": "img/prompt.png",
             "title": "Promptolás alapjai",
             "sub": "Útmutató",
             "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Promptol%C3%A1s-alapjai--%C3%ADgy-k%C3%A9rj-jobb-v%C3%A1laszt-az-AI-t%C3%B3l.aspx?d=wd58155ad3d654398894db2a2c1694d5b&csf=1&web=2&share=IQCtVYHVZT2YQ4lNsqLBaU1bAXIOrUeaAPmWa1OOBmq_-uw&e=FpyMHV",
@@ -121,14 +114,14 @@
             "img": "img/vs.png",
             "title": "Copilot Basic vagy Pro?",
             "sub": "Útmutató",
-            "link": "https://google.com",
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/Copilot-Chat-vagy-Microsoft-365-Copilot--Mi-a-k%C3%BCl%C3%B6nbs%C3%A9g-.aspx?d=w28aa1374f2794cd89ddf6985b1dabe17&csf=1&web=2&share=IQB0E6ooefLYTJ3faYWx2r4XAbpZU04m7GTG4SXhLh7ueW0&e=JOIlGC",
             "mark": false
         },
         {
-            "img": "img/kisokos_sablonok.jpg",
-            "title": "4",
-            "sub": "44",
-            "link": "https://google.com",
+            "img": "img/help.png",
+            "title": "Milyen Copilot licencem van?",
+            "sub": "Útmutató",
+            "link": "https://koerbergroup.sharepoint.com/:u:/r/sites/AI/SitePages/%C3%8Dgy-ellen%C5%91rizheted-a-Copilot-licencedet.aspx?d=wf577bf7a106e431d8a87fa45bb6ec8f8&csf=1&web=2&share=IQB6v3f1bhAdQ4qH-kW7bsj4ASW56vfARNm0QJX1LiqGWO8&e=0O6Dqv",
             "mark": false
         }
     ]
