@@ -18,10 +18,7 @@
             {
                 "img": "img/csempe_1_1_halado_automatizalt_tomeges_email_kuldes.png",
                 "level": "halado",
-                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAlTYukroLrSL1GIAsVEj_tAacHwPue06aVXXAJtp4nsv8",
-                "img": "img/csempe_1_1_halado_automatizalt_tomeges_email_kuldes.png",
-                "level": "halado",
-                "isNew": false
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAlTYukroLrSL1GIAsVEj_tAacHwPue06aVXXAJtp4nsv8"
             }
         ],
         "smallCards": [
@@ -34,10 +31,7 @@
             {
                 "img": "img/csempe_1_1_halado_mermaid_diagram_generalas.png",
                 "level": "halado",
-                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAKK8C6ZwRxQ5GPpk53AR-0ARkkh6U2yMsS0tOvB_yQfpc",
-                "img": "img/csempe_1_1_halado_mermaid_diagram_generalas.png",
-                "level": "halado",
-                "isNew": false
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAKK8C6ZwRxQ5GPpk53AR-0ARkkh6U2yMsS0tOvB_yQfpc"
             },
             {
                 "img": "img/csempe_1_1_halado_shopfloor_layout_felulet_fejlesztes.png",
@@ -54,15 +48,13 @@
             },
             {
                 "img": "img/ai_cafeteria_segedanyagok.jpg",
-                "level": "kezdo",
-                "isNew": false
+                "level": "kezdo"
             },
             {
                 "title": "AI cafeteria segédanyagok",
                 "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDsK8VXHWhuTpjrGObO--MKAUnouYtXiRKCb_4DAxBy7HY",
                 "img": "img/ai_cafeteria_segedanyagok_v2.jpg",
-                "level": "kezdo",
-                "isNew": false
+                "level": "kezdo"
             }
         ]
     },
@@ -87,18 +79,12 @@
             {
                 "img": "img/csempe_4_3_v1.png",
                 "level": "kezdo",
-                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAgLkHyMBRbRIYFFNCPo7uUAaBGkWGIVbxN7lgkL7yhgZ8",
-                "img": "img/csempe_4_3_v1.png",
-                "level": "kezdo",
-                "isNew": false
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQAgLkHyMBRbRIYFFNCPo7uUAaBGkWGIVbxN7lgkL7yhgZ8"
             },
             {
                 "img": "img/csempe_4_3_v2_adatgyujtes_weboldalrol.png",
                 "level": "kezdo",
-                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDNObMTaCIdRILx5ZQCgpvMAS6QpBdsGR1lrRmoMw8xibQ",
-                "img": "img/csempe_4_3_v2_adatgyujtes_weboldalrol.png",
-                "level": "kezdo",
-                "isNew": false
+                "link": "https://koerbergroup.sharepoint.com/:u:/s/AI/IQDNObMTaCIdRILx5ZQCgpvMAS6QpBdsGR1lrRmoMw8xibQ"
             }
         ]
     },
