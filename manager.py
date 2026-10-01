@@ -6,12 +6,12 @@ import shutil
 import hashlib
 import subprocess
 import unicodedata
-from datetime import datetime
+from datetime import date, datetime
 
-from PyQt6.QtCore import Qt, QThread, QTimer, pyqtSignal
+from PyQt6.QtCore import QDate, Qt, QThread, QTimer, pyqtSignal
 from PyQt6.QtGui import QKeySequence, QShortcut
 from PyQt6.QtWidgets import (
-    QAbstractItemView, QApplication, QCheckBox, QComboBox, QFileDialog,
+    QAbstractItemView, QApplication, QComboBox, QDateEdit, QFileDialog,
     QFormLayout, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit,
     QMainWindow, QMessageBox, QPushButton, QTreeWidget, QTreeWidgetItem,
     QVBoxLayout, QWidget,
@@ -28,6 +28,14 @@ LEVELS = ['kezdo', 'halado']
 ALLOWED_EXT = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'}
 MAX_IMG_BYTES = 5 * 1024 * 1024  # 5 MB — csak figyelmeztetés, nem tiltás
 PUSH_DELAY_MS = 4000  # ennyi nyugalom után indul az automatikus feltöltés
+NEW_DAYS = 30  # ennyi napig 'ÚJ' egy kártya — az index.html-ben is ugyanennyi legyen
+NO_DATE = QDate(2000, 1, 1)  # a dátummező 'nincs dátum' állása
+
+# Mi történjen, ha a data.json a gépen ÉS a GitHubon is változott?
+#   'newer'  -> amelyik frissebb (helyi fájl módosítási ideje vs. GitHub commit ideje)
+#   'local'  -> mindig a gépen lévő marad
+#   'remote' -> mindig a GitHubos marad
+CONFLICT_POLICY = 'newer'
 
 # Világos és sötét témán is olvasható színek. A None a téma alap szövegszínét jelenti.
 STATUS_NEUTRAL = None
@@ -60,6 +68,49 @@ def sanitize_filename(name):
         base = 'kep'
 
     return base + ext
+
+
+def parse_date(text):
+    try:
+        return datetime.strptime(text, '%Y-%m-%d').date()
+    except (TypeError, ValueError):
+        return None
+
+
+def days_left(card):
+    """Hány napig számít még újnak a kártya. None, ha már nem új (vagy nincs dátuma)."""
+    d = parse_date(card.get('date'))
+    if d is None:
+        return None
+    left = NEW_DAYS - (date.today() - d).days
+    return left if left >= 0 else None
+
+
+def migrate_cards(data):
+    """A régi isNew mezőt dátumra cseréli. True, ha bármi változott.
+
+    isNew: true  -> date = ma (innentől NEW_DAYS napig új)
+    isNew: false -> a mező egyszerűen eltűnik
+    """
+    today = date.today().isoformat()
+    changed = False
+
+    lists = []
+    for section in data.values():
+        if isinstance(section, dict):
+            lists.extend(v for v in section.values() if isinstance(v, list))
+        elif isinstance(section, list):
+            lists.append(section)  # pl. a 'kisokos' tömb
+
+    for cards in lists:
+        for card in cards:
+            if not isinstance(card, dict) or 'isNew' not in card:
+                continue
+            if card.pop('isNew') and not card.get('date'):
+                card['date'] = today
+            changed = True
+
+    return changed
 
 
 def file_hash(path):
@@ -113,7 +164,7 @@ class CardTree(QTreeWidget):
     def __init__(self):
         super().__init__()
         self.setColumnCount(5)
-        self.setHeaderLabels(['Cím (Keresőhöz)', 'Szint', 'ÚJ', 'Kép', 'Link'])
+        self.setHeaderLabels(['Cím (Keresőhöz)', 'Szint', 'Dátum', 'Kép', 'Link'])
         self.setAlternatingRowColors(True)
         self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.setDragEnabled(True)
@@ -124,7 +175,7 @@ class CardTree(QTreeWidget):
 
         self.setColumnWidth(0, 300)
         self.setColumnWidth(1, 80)
-        self.setColumnWidth(2, 60)
+        self.setColumnWidth(2, 170)
         self.setColumnWidth(3, 220)
 
     def dropEvent(self, event):
@@ -156,60 +207,141 @@ class CardTree(QTreeWidget):
         self.orderChanged.emit()
 
 
-# --- GitHub feltöltés háttérszálon -----------------------------------------
+# --- GitHub szinkron háttérszálon ------------------------------------------
 
-class GitPushWorker(QThread):
-    done = pyqtSignal(str, str, str)  # státusz szöveg, szín, részletes hibaüzenet
+def read_bytes(path):
+    try:
+        with open(path, 'rb') as f:
+            return f.read()
+    except OSError:
+        return None
+
+
+class GitSyncWorker(QThread):
+    """Előbb behúzza a GitHub állapotát, eldönti ki nyer a data.json-nál,
+    aztán feltölti, ami helyben új."""
+
+    done = pyqtSignal(str, str, str, bool)  # státusz, szín, hibaüzenet, változott-e a data.json
 
     def run(self):
+        self.start_bytes = read_bytes(DATA_FILE)
         try:
-            check = run_git(['rev-parse', '--is-inside-work-tree'])
+            self.sync()
         except FileNotFoundError:
-            self.done.emit('Nincs git.', STATUS_ERROR,
-                           'A git parancs nem található. Telepítsd a Git for Windows csomagot.')
-            return
+            self.finish('Nincs git.', STATUS_ERROR,
+                        'A git parancs nem található. Telepítsd a Git for Windows csomagot.')
+        except Exception as error:  # ne haljon el csendben a szál
+            self.finish('Váratlan hiba.', STATUS_ERROR, repr(error))
 
-        if check.returncode != 0:
-            self.done.emit('Nem git repo.', STATUS_ERROR,
-                           f'A(z) {os.path.abspath(REPO_DIR)} mappa nem git repository.')
-            return
+    def finish(self, status, color, detail=''):
+        changed = read_bytes(DATA_FILE) != self.start_bytes
+        self.done.emit(status, color or '', detail, changed)
 
-        # 1. Távoli változások behúzása
-        pull = run_git(['pull', '--rebase', '--autostash'])
-        if pull.returncode != 0:
-            self.done.emit('Pull sikertelen.', STATUS_ERROR,
-                           'Nem sikerült behúzni a távoli változásokat:\n\n'
-                           + (pull.stderr or pull.stdout).strip())
-            return
+    def git(self, args):
+        r = run_git(args)
+        return r.returncode, (r.stdout or '').strip(), (r.stderr or r.stdout or '').strip()
 
-        # 2. Változások előkészítése
-        add = run_git(['add', '--', 'data.json', 'img'])
-        if add.returncode != 0:
-            self.done.emit('Add sikertelen.', STATUS_ERROR, (add.stderr or add.stdout).strip())
-            return
+    def sync(self):
+        rc, _, _ = self.git(['rev-parse', '--is-inside-work-tree'])
+        if rc != 0:
+            return self.finish('Nem git repo.', STATUS_ERROR,
+                               f'A(z) {os.path.abspath(REPO_DIR)} mappa nem git repository.')
 
-        # 3. Commit — a "nincs mit commitolni" nem hiba
+        rc, upstream, _ = self.git(['rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}'])
+        if rc != 0:
+            return self.finish('Nincs követett ág.', STATUS_ERROR,
+                               'Az aktuális ágnak nincs beállítva távoli párja.\n\n'
+                               "Futtasd egyszer kézzel a mappában:  git push -u origin main")
+
+        # 1. Távoli állapot letöltése (még nem nyúl a helyi fájlokhoz)
+        rc, _, err = self.git(['fetch', '--quiet'])
+        if rc != 0:
+            return self.finish('Letöltés sikertelen.', STATUS_ERROR,
+                               'Nem sikerült elérni a GitHubot:\n\n' + err)
+
+        # A helyi data.json mentése, mielőtt bármi hozzányúlna
+        local_bytes = read_bytes(DATA_FILE)
+        local_mtime = os.path.getmtime(DATA_FILE) if local_bytes is not None else 0
+
+        # 2. Helyi változások commitolása
+        paths = [p for p in ('data.json', 'img') if os.path.exists(p)]
+        if paths:
+            rc, _, err = self.git(['add', '--'] + paths)
+            if rc != 0:
+                return self.finish('Add sikertelen.', STATUS_ERROR, err)
+
         stamp = datetime.now().strftime('%Y-%m-%d %H:%M')
-        commit = run_git(['commit', '-m', f'Kártyák frissítése — {stamp}'])
-        if commit.returncode != 0:
-            output = (commit.stdout + commit.stderr).lower()
-            if 'nothing to commit' in output or 'nincs mit' in output:
-                self.done.emit('Nincs új változás.', STATUS_NEUTRAL or '', '')
-                return
-            self.done.emit('Commit sikertelen.', STATUS_ERROR, (commit.stderr or commit.stdout).strip())
-            return
+        rc, _, _ = self.git(['diff', '--cached', '--quiet'])
+        if rc == 1:
+            rc, _, err = self.git(['commit', '-m', f'Kártyák frissítése — {stamp}'])
+            if rc != 0:
+                return self.finish('Commit sikertelen.', STATUS_ERROR, err)
 
-        # 4. Push
-        push = run_git(['push'])
-        if push.returncode != 0:
-            self.done.emit('Push sikertelen.', STATUS_ERROR,
-                           'Nem sikerült feltölteni:\n\n'
-                           + (push.stderr or push.stdout).strip()
-                           + "\n\nHa hitelesítési hibát látsz, futtass egy 'git push' parancsot "
-                             'kézzel a mappában, és jelentkezz be egyszer.')
-            return
+        # 3. Ki változtatta a data.json-t a közös pont óta?
+        rc, base, err = self.git(['merge-base', 'HEAD', upstream])
+        if rc != 0:
+            return self.finish('Nincs közös előzmény.', STATUS_ERROR,
+                               'A helyi és a GitHubos repo előzménye nem kapcsolódik:\n\n' + err)
 
-        self.done.emit(f'Feltöltve — {stamp}', STATUS_OK, '')
+        local_changed = self.git(['diff', '--quiet', base, 'HEAD', '--', 'data.json'])[0] == 1
+        remote_changed = self.git(['diff', '--quiet', base, upstream, '--', 'data.json'])[0] == 1
+
+        conflict = local_changed and remote_changed
+        local_wins = True
+        if conflict:
+            if CONFLICT_POLICY == 'local':
+                local_wins = True
+            elif CONFLICT_POLICY == 'remote':
+                local_wins = False
+            else:
+                _, ct, _ = self.git(['log', '-1', '--format=%ct', upstream, '--', 'data.json'])
+                remote_time = int(ct) if ct.isdigit() else 0
+                local_wins = local_mtime >= remote_time
+
+        # 4. Rebase a GitHubos állapotra. Rebase közben az "ours" a távoli,
+        #    a "theirs" a helyi commit — ezért fordítva kell megadni.
+        behind = self.git(['rev-list', '--count', f'HEAD..{upstream}'])[1]
+        if behind not in ('', '0'):
+            strategy = 'theirs' if local_wins else 'ours'
+            # --autostash: a nem általunk kezelt, módosított fájlokat (pl. index.html)
+            # félreteszi a rebase idejére, utána visszarakja
+            rc, _, err = self.git(['rebase', '--autostash', '-X', strategy, upstream])
+            if rc != 0:
+                self.git(['rebase', '--abort'])
+                return self.finish('Összefésülés sikertelen.', STATUS_ERROR,
+                                   'Nem sikerült összefésülni a GitHubos változásokkal:\n\n' + err)
+
+        # 5. Ütközésnél a nyertes data.json-t egészben érvényesítjük,
+        #    hogy ne legyen belőle félig ez, félig az.
+        note = ''
+        if conflict:
+            if local_wins and local_bytes is not None:
+                with open(DATA_FILE, 'wb') as f:
+                    f.write(local_bytes)
+                note = ' (ütközés: a gépen lévő maradt)'
+            else:
+                self.git(['checkout', upstream, '--', 'data.json'])
+                note = ' (ütközés: a GitHubos maradt)'
+
+            self.git(['add', '--', 'data.json'])
+            if self.git(['diff', '--cached', '--quiet'])[0] == 1:
+                rc, _, err = self.git(['commit', '-m', f'data.json ütközés feloldva — {stamp}'])
+                if rc != 0:
+                    return self.finish('Commit sikertelen.', STATUS_ERROR, err)
+
+        # 6. Push, ha van mit
+        ahead = self.git(['rev-list', '--count', f'{upstream}..HEAD'])[1]
+        if ahead in ('', '0'):
+            return self.finish('Naprakész' + note + '.', STATUS_OK)
+
+        rc, _, err = self.git(['push'])
+        if rc != 0:
+            return self.finish('Push sikertelen.', STATUS_ERROR,
+                               'Nem sikerült feltölteni:\n\n' + err
+                               + "\n\nHa hitelesítési hibát látsz, futtass egy 'git push' parancsot "
+                                 'kézzel a mappában, és jelentkezz be egyszer.')
+
+        self.finish(f'Feltöltve — {stamp}{note}', STATUS_OK)
 
 
 # --- Főablak ---------------------------------------------------------------
@@ -232,15 +364,26 @@ class App(QMainWindow):
         self.build_ui()
         self.refresh_tree()
 
+        # Indításkor először behúzzuk a GitHub állapotát
+        QTimer.singleShot(0, self.start_push)
+
     # --- Adatkezelés -------------------------------------------------------
 
     def load_data(self):
         if os.path.exists(DATA_FILE):
             try:
                 with open(DATA_FILE, 'r', encoding='utf-8') as f:
-                    return json.load(f)
+                    data = json.load(f)
             except (OSError, json.JSONDecodeError):
-                pass
+                data = None
+
+            if data is not None:
+                # Egyszeri átállás isNew -> date. Közvetlenül írjuk, a feltöltést
+                # az indításkori szinkron úgyis elviszi.
+                if migrate_cards(data):
+                    with open(DATA_FILE, 'w', encoding='utf-8') as f:
+                        json.dump(data, f, indent=4, ensure_ascii=False)
+                return data
         return {
             'altalanos': {'largeCards': [], 'smallCards': []},
             'copilot': {'largeCards': [], 'smallCards': []},
@@ -268,6 +411,7 @@ class App(QMainWindow):
         self.tree.orderChanged.connect(self.on_order_changed)
         tree_layout.addWidget(self.tree)
         layout.addWidget(tree_box, stretch=1)
+        self.tree_box = tree_box
 
         # Űrlap
         form_box = QGroupBox('Kártya Szerkesztése / Hozzáadása')
@@ -305,8 +449,29 @@ class App(QMainWindow):
         form_layout.addWidget(QLabel('Link (Cél URL):'), 4, 0)
         form_layout.addWidget(self.link_edit, 4, 1, 1, 3)
 
-        self.is_new_cb = QCheckBox("Új kártya (megjelenik rajta az 'ÚJ' plecsni)")
-        form_layout.addWidget(self.is_new_cb, 5, 1, 1, 3)
+        self.date_edit = QDateEdit()
+        self.date_edit.setCalendarPopup(True)
+        self.date_edit.setDisplayFormat('yyyy.MM.dd')
+        self.date_edit.setMinimumDate(NO_DATE)
+        self.date_edit.setSpecialValueText('nincs dátum')  # a minimum dátum helyett ez látszik
+        self.date_edit.setDate(QDate.currentDate())
+        self.date_edit.dateChanged.connect(self.update_date_hint)
+
+        today_btn = QPushButton('Ma')
+        today_btn.setToolTip('Mai dátum — a kártya újra ' + str(NEW_DAYS) + ' napig ÚJ lesz')
+        today_btn.clicked.connect(lambda: self.date_edit.setDate(QDate.currentDate()))
+
+        self.date_hint = QLabel()
+
+        date_row = QHBoxLayout()
+        date_row.addWidget(self.date_edit)
+        date_row.addWidget(today_btn)
+        date_row.addWidget(self.date_hint)
+        date_row.addStretch()
+
+        form_layout.addWidget(QLabel('Dátum:'), 5, 0)
+        form_layout.addLayout(date_row, 5, 1, 1, 3)
+        self.update_date_hint()
 
         # Gombsor
         buttons = QHBoxLayout()
@@ -343,6 +508,7 @@ class App(QMainWindow):
         buttons.addStretch()
         form_layout.addLayout(buttons, 6, 0, 1, 4)
         layout.addWidget(form_box)
+        self.form_box = form_box
 
         # GitHub
         git_box = QGroupBox('GitHub')
@@ -391,7 +557,7 @@ class App(QMainWindow):
                     item = QTreeWidgetItem(group, [
                         card.get('title', ''),
                         card.get('level', ''),
-                        'Igen' if card.get('isNew') else 'Nem',
+                        self.date_label(card),
                         card.get('img', ''),
                         card.get('link', ''),
                     ])
@@ -479,7 +645,8 @@ class App(QMainWindow):
         self.title_edit.setText(card.get('title', ''))
         self.img_edit.setText(os.path.basename(card.get('img', '')))
         self.link_edit.setText(card.get('link', '#'))
-        self.is_new_cb.setChecked(bool(card.get('isNew')))
+        d = parse_date(card.get('date'))
+        self.date_edit.setDate(QDate(d.year, d.month, d.day) if d else NO_DATE)
 
         self.update_btn.setEnabled(True)
         self.delete_btn.setEnabled(True)
@@ -493,7 +660,7 @@ class App(QMainWindow):
         self.title_edit.clear()
         self.img_edit.clear()
         self.link_edit.clear()
-        self.is_new_cb.setChecked(False)
+        self.date_edit.setDate(QDate.currentDate())
         self.update_btn.setEnabled(False)
         self.delete_btn.setEnabled(False)
         self.up_btn.setEnabled(False)
@@ -600,13 +767,37 @@ class App(QMainWindow):
         elif link != '#' and not link.startswith('http') and not link.startswith('/'):
             link = f'https://{link}'
 
-        return {
+        card = {
             'title': title,
             'link': link,
             'img': f'img/{img_name}',
             'level': self.level_combo.currentText(),
-            'isNew': self.is_new_cb.isChecked(),
         }
+        if self.date_edit.date() != NO_DATE:
+            card['date'] = self.date_edit.date().toString('yyyy-MM-dd')
+        return card
+
+    # --- Dátum megjelenítés ------------------------------------------------
+
+    @staticmethod
+    def date_label(card):
+        d = parse_date(card.get('date'))
+        if d is None:
+            return '—'
+        left = days_left(card)
+        text = d.strftime('%Y.%m.%d')
+        return f'{text}  · ÚJ még {left} napig' if left is not None else text
+
+    def update_date_hint(self):
+        qd = self.date_edit.date()
+        if qd == NO_DATE:
+            self.date_hint.setText('nem kap ÚJ jelölést')
+            return
+        left = days_left({'date': qd.toString('yyyy-MM-dd')})
+        if left is None:
+            self.date_hint.setText('már nem ÚJ')
+        else:
+            self.date_hint.setText(f'ÚJ jelölés még {left} napig')
 
     # --- CRUD --------------------------------------------------------------
 
@@ -691,15 +882,26 @@ class App(QMainWindow):
             return
 
         self.push_btn.setEnabled(False)
-        self.set_git_status('Feltöltés folyamatban...')
+        # Szinkron alatt nem lehet szerkeszteni, különben a git felülírhatná a friss mentést
+        self.tree_box.setEnabled(False)
+        self.form_box.setEnabled(False)
+        self.set_git_status('Szinkronizálás a GitHubbal...')
 
-        self.push_worker = GitPushWorker()
+        self.push_worker = GitSyncWorker()
         self.push_worker.done.connect(self.on_push_done)
         self.push_worker.start()
 
-    def on_push_done(self, status, color, error_detail):
+    def on_push_done(self, status, color, error_detail, data_changed):
         self.set_git_status(status, color or STATUS_NEUTRAL)
         self.push_btn.setEnabled(True)
+        self.tree_box.setEnabled(True)
+        self.form_box.setEnabled(True)
+
+        # Ha a GitHubról jött új data.json, töltsük újra a felületet
+        if data_changed:
+            self.data = self.load_data()
+            self.refresh_tree()
+            self.clear_form()
 
         if error_detail:
             QMessageBox.critical(self, 'GitHub hiba', error_detail)
@@ -709,7 +911,7 @@ class App(QMainWindow):
         if self.push_timer.isActive():
             self.push_timer.stop()
             if self.push_worker is None or not self.push_worker.isRunning():
-                self.push_worker = GitPushWorker()
+                self.push_worker = GitSyncWorker()
                 self.push_worker.start()
 
         if self.push_worker is not None and self.push_worker.isRunning():
@@ -720,6 +922,8 @@ class App(QMainWindow):
 
 
 if __name__ == '__main__':
+    # Mindig a script mappájából dolgozzon, akárhonnan indítják
+    os.chdir(os.path.dirname(os.path.abspath(sys.argv[0])))
     app = QApplication(sys.argv)
     window = App()
     window.show()
