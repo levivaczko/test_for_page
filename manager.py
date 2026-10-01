@@ -11,7 +11,7 @@ from datetime import date, datetime
 from PyQt6.QtCore import QDate, Qt, QThread, QTimer, pyqtSignal
 from PyQt6.QtGui import QKeySequence, QShortcut
 from PyQt6.QtWidgets import (
-    QAbstractItemView, QApplication, QComboBox, QDateEdit, QFileDialog,
+    QAbstractItemView, QApplication, QCheckBox, QComboBox, QDateEdit, QFileDialog,
     QFormLayout, QGridLayout, QGroupBox, QHBoxLayout, QLabel, QLineEdit,
     QMainWindow, QMessageBox, QPushButton, QTreeWidget, QTreeWidgetItem,
     QVBoxLayout, QWidget,
@@ -24,6 +24,8 @@ REPO_DIR = '.'
 SECTIONS = ['altalanos', 'copilot']
 CARD_TYPES = ['largeCards', 'smallCards']
 LEVELS = ['kezdo', 'halado']
+KISOKOS = 'kisokos'      # a felső narancs sáv csempéi — sima lista, nincs típusa/szintje
+KISOKOS_MAX = 4          # az index.html MAX_TILES értéke: ennyi jelenik meg az oldalon
 
 ALLOWED_EXT = {'.png', '.jpg', '.jpeg', '.gif', '.webp', '.svg'}
 MAX_IMG_BYTES = 5 * 1024 * 1024  # 5 MB — csak figyelmeztetés, nem tiltás
@@ -35,7 +37,10 @@ NO_DATE = QDate(2000, 1, 1)  # a dátummező 'nincs dátum' állása
 #   'newer'  -> amelyik frissebb (helyi fájl módosítási ideje vs. GitHub commit ideje)
 #   'local'  -> mindig a gépen lévő marad
 #   'remote' -> mindig a GitHubos marad
-CONFLICT_POLICY = 'newer'
+CONFLICT_POLICY = 'remote'
+# Ütközésnél a VESZTES oldal mindig ide mentődik, így semmi nem vész el.
+# (Nem kerül fel GitHubra, mert a szinkron csak a data.json-t és az img-t tölti fel.)
+BACKUP_DIR = './backup/'
 
 # Világos és sötét témán is olvasható színek. A None a téma alap szövegszínét jelenti.
 STATUS_NEUTRAL = None
@@ -164,7 +169,7 @@ class CardTree(QTreeWidget):
     def __init__(self):
         super().__init__()
         self.setColumnCount(5)
-        self.setHeaderLabels(['Cím (Keresőhöz)', 'Szint', 'Dátum', 'Kép', 'Link'])
+        self.setHeaderLabels(['Cím (Keresőhöz)', 'Szint / Alcím', 'Dátum', 'Kép', 'Link'])
         self.setAlternatingRowColors(True)
         self.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.setDragEnabled(True)
@@ -174,7 +179,7 @@ class CardTree(QTreeWidget):
         self.setUniformRowHeights(True)
 
         self.setColumnWidth(0, 300)
-        self.setColumnWidth(1, 80)
+        self.setColumnWidth(1, 140)
         self.setColumnWidth(2, 170)
         self.setColumnWidth(3, 220)
 
@@ -315,13 +320,25 @@ class GitSyncWorker(QThread):
         #    hogy ne legyen belőle félig ez, félig az.
         note = ''
         if conflict:
+            backup_stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+            os.makedirs(BACKUP_DIR, exist_ok=True)
+            if local_wins:
+                rc_show, remote_text, _ = self.git(['show', f'{upstream}:data.json'])
+                if rc_show == 0:
+                    with open(os.path.join(BACKUP_DIR, f'data-github-{backup_stamp}.json'),
+                              'w', encoding='utf-8') as f:
+                        f.write(remote_text + '\n')
+            elif local_bytes is not None:
+                with open(os.path.join(BACKUP_DIR, f'data-helyi-{backup_stamp}.json'), 'wb') as f:
+                    f.write(local_bytes)
+
             if local_wins and local_bytes is not None:
                 with open(DATA_FILE, 'wb') as f:
                     f.write(local_bytes)
-                note = ' (ütközés: a gépen lévő maradt)'
+                note = ' (ütközés: a gépen lévő maradt, a GitHubos a backup mappában)'
             else:
                 self.git(['checkout', upstream, '--', 'data.json'])
-                note = ' (ütközés: a GitHubos maradt)'
+                note = ' (ütközés: a GitHubos maradt, a helyi a backup mappában)'
 
             self.git(['add', '--', 'data.json'])
             if self.git(['diff', '--cached', '--quiet'])[0] == 1:
@@ -353,6 +370,7 @@ class App(QMainWindow):
         self.resize(1100, 800)
 
         self.data = self.load_data()
+        self.disk_snapshot = read_bytes(DATA_FILE)  # amit utoljára láttunk a lemezen
         self.original_image_path = None
         self.push_worker = None
 
@@ -378,22 +396,64 @@ class App(QMainWindow):
                 data = None
 
             if data is not None:
-                # Egyszeri átállás isNew -> date. Közvetlenül írjuk, a feltöltést
-                # az indításkori szinkron úgyis elviszi.
-                if migrate_cards(data):
-                    with open(DATA_FILE, 'w', encoding='utf-8') as f:
-                        json.dump(data, f, indent=4, ensure_ascii=False)
+                # isNew -> date átállás CSAK memóriában. A fájlhoz betöltéskor nem
+                # nyúlunk, mert az friss módosítási időt adna neki, és szinkronnál
+                # tévesen "újabbnak" látszana a GitHubos változatnál.
+                # A következő mentéskor a már átállított adat kerül ki.
+                migrate_cards(data)
+                data.setdefault(KISOKOS, [])
                 return data
         return {
             'altalanos': {'largeCards': [], 'smallCards': []},
             'copilot': {'largeCards': [], 'smallCards': []},
+            KISOKOS: [],
         }
 
+    def cards_of(self, section, ctype):
+        """A kártyák listája egy csoportban. A kisokos sima lista, a többi szekció/típus."""
+        if section == KISOKOS:
+            return self.data.setdefault(KISOKOS, [])
+        return self.data.setdefault(section, {}).setdefault(ctype, [])
+
+    def set_cards(self, section, ctype, cards):
+        if section == KISOKOS:
+            self.data[KISOKOS] = cards
+        else:
+            self.data.setdefault(section, {})[ctype] = cards
+
     def save_data(self):
+        """Mentés. Ha a data.json-t közben kívülről (kézzel, másik programmal)
+        átírták, nem írjuk felül szó nélkül."""
+        on_disk = read_bytes(DATA_FILE)
+        if on_disk is not None and on_disk != self.disk_snapshot:
+            box = QMessageBox(self)
+            box.setIcon(QMessageBox.Icon.Warning)
+            box.setWindowTitle('A data.json közben megváltozott')
+            box.setText('A data.json-t a kezelőn kívül módosították, mióta betöltötted.\n\n'
+                        'Betöltés: a lemezen lévő változat jön be, ez az utolsó módosításod elvész.\n'
+                        'Felülírás: a kezelőben lévő adat ment ki, a lemezen lévő a backup mappába kerül.')
+            reload_btn = box.addButton('Betöltés', QMessageBox.ButtonRole.AcceptRole)
+            box.addButton('Felülírás', QMessageBox.ButtonRole.DestructiveRole)
+            box.exec()
+
+            if box.clickedButton() is reload_btn:
+                self.data = self.load_data()
+                self.disk_snapshot = read_bytes(DATA_FILE)
+                self.refresh_tree()
+                self.clear_form()
+                return False
+
+            os.makedirs(BACKUP_DIR, exist_ok=True)
+            stamp = datetime.now().strftime('%Y%m%d-%H%M%S')
+            with open(os.path.join(BACKUP_DIR, f'data-lemezen-{stamp}.json'), 'wb') as f:
+                f.write(on_disk)
+
         with open(DATA_FILE, 'w', encoding='utf-8') as f:
             json.dump(self.data, f, indent=4, ensure_ascii=False)
+        self.disk_snapshot = read_bytes(DATA_FILE)
 
         self.schedule_push()
+        return True
 
     # --- Felület -----------------------------------------------------------
 
@@ -418,7 +478,8 @@ class App(QMainWindow):
         form_layout = QGridLayout(form_box)
 
         self.section_combo = QComboBox()
-        self.section_combo.addItems(SECTIONS)
+        self.section_combo.addItems(SECTIONS + [KISOKOS])
+        self.section_combo.currentTextChanged.connect(self.update_form_mode)
         self.type_combo = QComboBox()
         self.type_combo.addItems(CARD_TYPES)
         self.type_combo.setCurrentText('smallCards')
@@ -431,6 +492,12 @@ class App(QMainWindow):
         form_layout.addWidget(self.type_combo, 0, 3)
         form_layout.addWidget(QLabel('Szint:'), 1, 0)
         form_layout.addWidget(self.level_combo, 1, 1)
+
+        # Csak a kisokos csempéknél
+        self.sub_edit = QLineEdit()
+        self.sub_edit.setPlaceholderText('pl. Új szabályzat — csak kisokosnál')
+        form_layout.addWidget(QLabel('Alcím:'), 1, 2)
+        form_layout.addWidget(self.sub_edit, 1, 3)
 
         self.title_edit = QLineEdit()
         form_layout.addWidget(QLabel('Cím (Keresőhöz!):'), 2, 0)
@@ -469,9 +536,13 @@ class App(QMainWindow):
         date_row.addWidget(self.date_hint)
         date_row.addStretch()
 
+        self.mark_cb = QCheckBox('Piros felkiáltójel (kisokos)')
+        date_row.addWidget(self.mark_cb)
+
         form_layout.addWidget(QLabel('Dátum:'), 5, 0)
         form_layout.addLayout(date_row, 5, 1, 1, 3)
         self.update_date_hint()
+        self.update_form_mode()
 
         # Gombsor
         buttons = QHBoxLayout()
@@ -536,11 +607,15 @@ class App(QMainWindow):
         self.tree.blockSignals(True)
         self.tree.clear()
 
-        for section in SECTIONS:
-            for ctype in CARD_TYPES:
-                cards = self.data.get(section, {}).get(ctype, [])
+        groups = [(KISOKOS, None)] + [(sec, ct) for sec in SECTIONS for ct in CARD_TYPES]
+        for section, ctype in groups:
+                cards = self.cards_of(section, ctype)
 
-                group = QTreeWidgetItem(self.tree, [f'{section}  ›  {ctype}'])
+                if section == KISOKOS:
+                    label = f'AI Kisokos sáv  ›  az első {KISOKOS_MAX} jelenik meg ({len(cards)} db)'
+                else:
+                    label = f'{section}  ›  {ctype}'
+                group = QTreeWidgetItem(self.tree, [label])
                 group.setData(0, ROLE, (section, ctype))
                 group.setFirstColumnSpanned(True)
                 # Nem állítunk fix színt, hogy sötét témában is olvasható maradjon
@@ -554,9 +629,13 @@ class App(QMainWindow):
                 )
 
                 for card in cards:
+                    if section == KISOKOS:
+                        second = ('❗ ' if card.get('mark') else '') + card.get('sub', '')
+                    else:
+                        second = card.get('level', '')
                     item = QTreeWidgetItem(group, [
                         card.get('title', ''),
-                        card.get('level', ''),
+                        second,
                         self.date_label(card),
                         card.get('img', ''),
                         card.get('link', ''),
@@ -602,9 +681,9 @@ class App(QMainWindow):
         for i in range(self.tree.topLevelItemCount()):
             group = self.tree.topLevelItem(i)
             section, ctype = group.data(0, ROLE)
-            self.data[section][ctype] = [
+            self.set_cards(section, ctype, [
                 group.child(j).data(0, ROLE) for j in range(group.childCount())
-            ]
+            ])
 
         self.save_data()
 
@@ -614,7 +693,7 @@ class App(QMainWindow):
             return
 
         section, ctype, index = path
-        cards = self.data[section][ctype]
+        cards = self.cards_of(section, ctype)
         new_index = index + delta
 
         if not 0 <= new_index < len(cards):
@@ -636,12 +715,15 @@ class App(QMainWindow):
             return
 
         section, ctype, index = path
-        card = self.data[section][ctype][index]
+        card = self.cards_of(section, ctype)[index]
         self.original_image_path = None
 
         self.section_combo.setCurrentText(section)
-        self.type_combo.setCurrentText(ctype)
+        if ctype:
+            self.type_combo.setCurrentText(ctype)
         self.level_combo.setCurrentText(card.get('level', 'kezdo'))
+        self.sub_edit.setText(card.get('sub', ''))
+        self.mark_cb.setChecked(bool(card.get('mark')))
         self.title_edit.setText(card.get('title', ''))
         self.img_edit.setText(os.path.basename(card.get('img', '')))
         self.link_edit.setText(card.get('link', '#'))
@@ -660,6 +742,8 @@ class App(QMainWindow):
         self.title_edit.clear()
         self.img_edit.clear()
         self.link_edit.clear()
+        self.sub_edit.clear()
+        self.mark_cb.setChecked(False)
         self.date_edit.setDate(QDate.currentDate())
         self.update_btn.setEnabled(False)
         self.delete_btn.setEnabled(False)
@@ -767,17 +851,39 @@ class App(QMainWindow):
         elif link != '#' and not link.startswith('http') and not link.startswith('/'):
             link = f'https://{link}'
 
-        card = {
-            'title': title,
-            'link': link,
-            'img': f'img/{img_name}',
-            'level': self.level_combo.currentText(),
-        }
+        if self.section_combo.currentText() == KISOKOS:
+            card = {
+                'img': f'img/{img_name}',
+                'title': title,
+                'sub': self.sub_edit.text().strip(),
+                'link': link,
+                'mark': self.mark_cb.isChecked(),
+            }
+        else:
+            card = {
+                'title': title,
+                'link': link,
+                'img': f'img/{img_name}',
+                'level': self.level_combo.currentText(),
+            }
         if self.date_edit.date() != NO_DATE:
             card['date'] = self.date_edit.date().toString('yyyy-MM-dd')
         return card
 
     # --- Dátum megjelenítés ------------------------------------------------
+
+    def target_group(self):
+        """Az űrlap szerinti cél csoport: (section, ctype)."""
+        section = self.section_combo.currentText()
+        return (section, None) if section == KISOKOS else (section, self.type_combo.currentText())
+
+    def update_form_mode(self, *_):
+        """Kisokosnál nincs típus és szint, viszont van alcím és felkiáltójel."""
+        is_k = self.section_combo.currentText() == KISOKOS
+        self.type_combo.setEnabled(not is_k)
+        self.level_combo.setEnabled(not is_k)
+        self.sub_edit.setEnabled(is_k)
+        self.mark_cb.setEnabled(is_k)
 
     @staticmethod
     def date_label(card):
@@ -806,14 +912,22 @@ class App(QMainWindow):
         if not new_card:
             return
 
-        section = self.section_combo.currentText()
-        ctype = self.type_combo.currentText()
-        self.data[section][ctype].append(new_card)
+        section, ctype = self.target_group()
+        cards = self.cards_of(section, ctype)
+        cards.append(new_card)
 
-        self.save_data()
+        if not self.save_data():
+            return
         self.refresh_tree()
         self.clear_form()
-        QMessageBox.information(self, 'Siker', 'Kártya hozzáadva!')
+
+        if section == KISOKOS and len(cards) > KISOKOS_MAX:
+            QMessageBox.information(
+                self, 'Siker',
+                f'Kártya hozzáadva — de a sávban csak az első {KISOKOS_MAX} látszik. '
+                f'Húzd feljebb, ha ennek is meg kell jelennie.')
+        else:
+            QMessageBox.information(self, 'Siker', 'Kártya hozzáadva!')
 
     def update_card(self):
         path = self.selected_path()
@@ -825,19 +939,20 @@ class App(QMainWindow):
             return
 
         old_section, old_ctype, index = path
-        new_section = self.section_combo.currentText()
-        new_ctype = self.type_combo.currentText()
+        new_section, new_ctype = self.target_group()
 
         if (old_section, old_ctype) == (new_section, new_ctype):
             # Helyben cseréljük, hogy ne kerüljön a lista végére
-            self.data[old_section][old_ctype][index] = updated_card
+            self.cards_of(old_section, old_ctype)[index] = updated_card
             target = (old_section, old_ctype, index)
         else:
-            self.data[old_section][old_ctype].pop(index)
-            self.data[new_section][new_ctype].append(updated_card)
-            target = (new_section, new_ctype, len(self.data[new_section][new_ctype]) - 1)
+            self.cards_of(old_section, old_ctype).pop(index)
+            dest = self.cards_of(new_section, new_ctype)
+            dest.append(updated_card)
+            target = (new_section, new_ctype, len(dest) - 1)
 
-        self.save_data()
+        if not self.save_data():
+            return
         self.refresh_tree(select=target)
         QMessageBox.information(self, 'Siker', 'Kártya módosítva!')
 
@@ -853,8 +968,9 @@ class App(QMainWindow):
             return
 
         section, ctype, index = path
-        self.data[section][ctype].pop(index)
-        self.save_data()
+        self.cards_of(section, ctype).pop(index)
+        if not self.save_data():
+            return
         self.refresh_tree()
         self.clear_form()
 
@@ -902,6 +1018,7 @@ class App(QMainWindow):
             self.data = self.load_data()
             self.refresh_tree()
             self.clear_form()
+        self.disk_snapshot = read_bytes(DATA_FILE)
 
         if error_detail:
             QMessageBox.critical(self, 'GitHub hiba', error_detail)
