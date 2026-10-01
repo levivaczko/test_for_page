@@ -101,9 +101,9 @@
     .kisokos-tile:hover .kisokos-title { color: #fd8723; }
     .kisokos-mark { background-image: linear-gradient(rgba(253, 135, 35, 0.25), rgba(253, 135, 35, 0.25)); background-repeat: no-repeat; background-position: 0 0; background-size: 0% 100%; border-radius: 2px 7px 3px 8px; padding: 1px 3px; -webkit-box-decoration-break: clone; box-decoration-break: clone; transition: background-size 0.45s cubic-bezier(0.65, 0, 0.35, 1); }
     .kisokos-tile:hover .kisokos-mark { background-size: 100% 100%; }
-    .kisokos-alert { position: absolute; top: 7px; right: 9px; width: 17px; height: 21px; pointer-events: none; transform: rotate(-6deg); }
-    .kisokos-alert path { fill: none; stroke: #FFD100; stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; }
-    .kisokos-tile:hover .kisokos-alert { transform: rotate(-6deg) scale(1.12); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+    .kisokos-alert { position: absolute; top: 6px; right: 8px; width: 22px; height: 27px; pointer-events: none; transform: rotate(6deg); }
+    .kisokos-alert path { fill: none; stroke: #E3000F; stroke-width: 3.2; stroke-linecap: round; stroke-linejoin: round; }
+    .kisokos-tile:hover .kisokos-alert { transform: rotate(6deg) scale(1.12); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
     @media (prefers-reduced-motion: reduce) { .kisokos-mark { transition: none; } }
     .kisokos-sub { display: block; font-size: 13px; color: #666; line-height: 1.35; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     /* --- Kisokos: élő vonal --- */
@@ -261,6 +261,7 @@
         const BOIL_ALWAYS = true;   // false = a sáv kerete csak hoverre remeg
         const BOIL_MS = 125;        // képkocka-váltás ideje
         const INK_OUT = 4;          // mennyire lógjon ki a keret a sávból (px)
+        const BOIL_FRAMES = 8;      // hány különböző körberajzolás közül válogasson
         let boilTimer = null;
 
         function inkRng(seed) {
@@ -326,11 +327,10 @@
             const path = inkPath('');
             svg.appendChild(path);
 
-            const frames = [
-                roughRect(w, h, 12 + INK_OUT, 11, 2.4, INK_OUT),
-                roughRect(w, h, 12 + INK_OUT, 22, 2.4, INK_OUT),
-                roughRect(w, h, 12 + INK_OUT, 33, 2.4, INK_OUT)
-            ];
+            const frames = [];
+            for (let f = 0; f < BOIL_FRAMES; f++) {
+                frames.push(roughRect(w, h, 12 + INK_OUT, 11 + f * 37, 2.4, INK_OUT));
+            }
             path.setAttribute('d', frames[0]);
 
             clearInterval(boilTimer);
@@ -338,7 +338,10 @@
             const start = () => {
                 clearInterval(boilTimer);
                 boilTimer = setInterval(() => {
-                    idx = (idx + 1) % frames.length;
+                    // véletlen következő képkocka, de sosem ugyanaz kétszer egymás után
+                    let next = idx;
+                    while (next === idx) next = Math.floor(Math.random() * frames.length);
+                    idx = next;
                     path.setAttribute('d', frames[idx]);
                 }, BOIL_MS);
             };
@@ -384,11 +387,28 @@
                         <span class="kisokos-title" title="${item.title || ''}"><span class="kisokos-mark">${item.title || ''}</span></span>
                         ${item.sub ? `<span class="kisokos-sub">${item.sub}</span>` : ''}
                     </span>
-                    ${item.isNew ? '<span class="kisokos-new"></span>' : ''}
+                    ${isCardNew(item) ? '<span class="kisokos-new"></span>' : ''}
                     ${item.mark ? KISOKOS_ALERT : ''}
                 </a>`;
             }).join('');
             requestAnimationFrame(initKisokosInk);
+        }
+
+        // Egy kártya addig számít újnak, amíg a dátuma NEW_DAYS napnál frissebb.
+        // A régi isNew mezőt csak akkor nézzük, ha még nincs dátum (átmeneti állapot,
+        // amíg a manager.py egyszer le nem futott és át nem írta dátumra).
+        const NEW_DAYS = 30;  // a manager.py-ban is ugyanennyi legyen
+        function isCardNew(card) {
+            if (!card) return false;
+            if (!card.date) return card.isNew === true;
+            const d = new Date(card.date + 'T00:00:00');
+            if (isNaN(d.getTime())) return false;
+            return (Date.now() - d.getTime()) <= NEW_DAYS * 86400000;
+        }
+
+        // Ékezetek leszedése kereséshez: "jegyzetelés" -> "jegyzeteles"
+        function foldAccents(text) {
+            return (text || '').toString().normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
         }
 
         function getAllCardsFlattened() {
